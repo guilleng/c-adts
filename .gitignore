@@ -1,0 +1,15 @@
+# Ignore backup files:
+*~
+*.swp
+*.swo
+*.dat
+*.backup
+
+# Ignore personal notes:
+*.note.md
+
+# Ignore build file/folders
+bin/
+tests/bin/
+obj/
+*.o
