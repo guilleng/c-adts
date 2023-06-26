@@ -11,6 +11,7 @@ A basic C data structure library.
 ## Table of Contents
 
 + [Installation](#installation)
++ [Basic Usage](#basic-usage)
 + [Contributing](#contributing)
 + [Project Motivation](#project-motivation)
     + [Testing](#unit-testing)
@@ -25,6 +26,10 @@ the header (interface) and source file (implementation) corresponding to the
 desired data structure. Then, either add a `typedef` for the `Element` type or
 incorporate the folder `/include/common` too.
 
+### Basic Usage
+
+`main.c` contains code snippets that demonstrate the usage of various data 
+structures provided by the library through function calls.
 
 ### Contributing
 
@@ -56,14 +61,14 @@ delve into the concepts and practices of unit testing and leveraging Doxygen for
 code documentation. 
 
 I hope that the knowledge acquired through this project will serve as a
-valuable asset for future endeavors, allowing for continued growth and reuse of 
-valuable skills and insights.
+valuable asset for future endeavors, allowing for growth and reuse of skills 
+and insights.
 
 ### Unit Testing
 
-I am using this project to incorporate unit testing. I have integrated a simple 
-testing framework called [minunit](https://github.com/siu/minunit). Minunit 
-consists of only a header file, making it lightweight and easy to use.   
+The project integrates a simple testing framework called 
+[minunit](https://github.com/siu/minunit), which consists of only a header 
+file, making it lightweight and easy to use.
 
 The testing process involves two distinct strategies:
 

@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -std=c89 -g -O0 -Wall -Wextra -Wpedantic
+CFLAGS := -std=c99 -g -O0 -Wall -Wextra -Wpedantic
 LDFLAGS := -lm -lrt 
 
 TARGET_EXEC := main 
