@@ -26,8 +26,8 @@
 #include "common/data_types.h"
 
 /**
- * @brief Incomplete type definition. Implementation details for this `struct` 
- * are documented in the source file for this data structure. 
+ * @brief Incomplete type definition. Implementation details documented in the 
+ * source file `stack_adt.c`.
  */
 typedef struct stack_type* StackADT;
 
@@ -39,32 +39,32 @@ typedef struct stack_type* StackADT;
  *  + __Halves__ if usage falls _below 25%_ and the shrinking leaves it at a 
  *    size at least _equal to_ its original definition.
  *
- * In case of failure to allocate memory `errno` will be set accordingly and 
- * the interpreted error message outputted to `stderr`.  
+ * If the size argument passed is zero, `errno` is set to `EPERM`. In case of 
+ * failure to allocate memory `errno` is set to `ENOMEM`. For both cases the 
+ * interpreted error message is outputted to `stderr`, and `NULL` is returned.
  *
  * @param size The number of elements for initialization.
- * @return Returns an `StackADT` object on success, `NULL` on failure setting 
- *         `errno` to `ENOMEM`
+ * @return Returns a `StackADT` object on success, `NULL` on failure. 
  */
 StackADT create_stackadt(size_t size);
 
 /**
  * @brief Creates a fixed-size stack.
  *
- * In case of failure to allocate memory `errno` will be set accordingly and 
- * the interpreted error message outputted to `stderr`.  
+ * If the size argument passed is zero, `errno` is set to `EPERM`. In case of 
+ * failure to allocate memory `errno` is set to `ENOMEM`. For both cases the 
+ * interpreted error message is outputted to `stderr`, and `NULL` is returned.
  *
  * @param size The maximum number of items the stack allows.
- * @return Returns an `StackADT` object on success, `NULL` on failure setting 
- *         `errno` to `ENOMEM`
+ * @return Returns a `StackADT` object on success, `NULL` on failure.
  */
 StackADT create_fixsize_stackadt(size_t size);
 
 /**
  * @brief Deallocates a `StackADT` object.
  *
- * @note Client-side is responsible for deallocating the memory in-use by the 
- *       elements of the stack `s`.  
+ * @note Client-side is responsible for deallocating the memory in-use by all 
+ *       elements in `s`.  
  *
  * @param s The object stack to deallocate.  
  * @return Returns no value. 
@@ -80,7 +80,7 @@ void destroy_stackadt(StackADT s);
 size_t nelems_of_stackadt(StackADT s);
 
 /**
- * @brief Tests whether the size of `s` size is variable or fixed.
+ * @brief Tests whether the size of `s` is variable or fixed.
  *
  * @param s The stack to check.  
  * @return Returns zero if `s` is of variable size, non-zero otherwise.  
@@ -90,6 +90,8 @@ int is_fix_stackadt(StackADT s);
 /**
  * @brief Empties the stack pointed to by `stackptr`.
  *
+ * @note Client-side is responsible for deallocating the memory in-use by all 
+ *       elements in `s`.  
  *
  * @param stackptr A pointer to the stack to empty.  
  * @return Returns an `StackADT` object on success, `NULL` on failure.
@@ -101,7 +103,7 @@ StackADT make_empty_stackadt(StackADT *stackptr);
  *
  * The behavior of the operation depends upon the type of stack object being 
  * pushed to:  
- *  + If s is of fixed-size and there is no room to add `e` 
+ *  + If `s` is of fixed-size and there is no room to add `e` 
  *    (__Stack overflow__), `NULL` is returned and `errno` is set to `EPERM`.
  *  + If `s` is of variable-size with no room for `e` and the system fails to 
  *    allocate memory `NULL` is returned and `errno` is set to `ENOMEM`. 
@@ -118,13 +120,13 @@ Element push_stackadt(StackADT s, Element e);
  * Returns and removes the last element added to it. If `s` is empty (__Stack 
  * underflow__), `NULL` is returned and `errno` is set to `EPERM`. 
  *
- * If the stack is a variable-size stack and its usage falls below 25% before 
- * the pop operation, the stack size is halved before popping the item. 
- * If the reallocation of memory fails, `ENOMEM` is set, but the top element is 
- * still popped from the stack.
+ * + If `s` is a variable-size stack and its usage is below 25% before the pop 
+ *   operation, the stack size is halved before popping the item. 
+ * + If the reallocation of memory fails, `ENOMEM` is set, but the top element 
+ *   is still popped from the stack.
  *
  * @param s The stack to pop from.
- * @return Returns an `Element` on success, `NULL` on underflow. 
+ * @return Returns `NULL` on underflow, an `Element` otherwise. 
  */
 Element pop_stackadt(StackADT s);
 
