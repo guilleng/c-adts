@@ -1,6 +1,7 @@
 /**
  * @file stack_adt.h
- * @brief A simple ADT `stack` module. 
+ *
+ * @brief A simple ADT `stack` module.
  *
  * ## Key Points
  *  + Relies on `void` pointers to allow manipulating elements of any type. 
@@ -12,6 +13,13 @@
  *  + Clients are responsible for managing the memory space of the objects 
  *    loaded to the structure.  
  *  + No type safety.   
+ *
+ * To incorporate this data structure into one of your projects, just copy the 
+ * header (`.h`), source file (`.c`), and the `/inlcude/common` folder.
+ *
+ * @note The Doxygen-generated documentation is tailored for the client-side of 
+ * the code. Follow <a href="stack_adt_8c-example.html">this link</a> to check 
+ * the interface's implementation, which includes specific comments.
  */
 
 #ifndef ADT_STACK_H
@@ -27,7 +35,7 @@
 
 /**
  * @brief Incomplete type definition. Implementation details documented in the 
- * source file `stack_adt.c`.
+ * source file <a href="stack_adt_8c-example.html">stack_adt.c</a>.
  */
 typedef struct stack_type* StackADT;
 
@@ -124,6 +132,9 @@ Element push_stackadt(StackADT s, Element e);
  *   operation, the stack size is halved before popping the item. 
  * + If the reallocation of memory fails, `ENOMEM` is set, but the top element 
  *   is still popped from the stack.
+ *
+ * @note Client-side is responsible for deallocating the memory in-use by all 
+ *       elements in `s`.  
  *
  * @param s The stack to pop from.
  * @return Returns `NULL` on underflow, an `Element` otherwise. 

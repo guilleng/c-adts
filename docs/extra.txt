@@ -1,0 +1,23 @@
+This file contains doxygen comments for several files/folders of the project. 
+These comments are needed to generate the html documentation, but belong to no 
+particular file whatsoever.
+
+/**
+ * @dir include
+ * @brief Header files.
+ *
+ * Contains header files for the project.
+ */
+
+/**
+ * @dir common
+ * @brief Common folder.
+ *
+ * Holds data_types.h, which contains the definition of a common data type used 
+ * throughout the project.
+ */
+
+ /** 
+  * @example stack_adt.c 
+  * @example queue_adt.c 
+  */
