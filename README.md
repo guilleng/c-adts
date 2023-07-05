@@ -38,19 +38,19 @@ testing, and generating documentation process.
 
 + `make all`: This rule is self-explanatory.  
 
-+ `make tests`: Invoking this rule builds and executes all unit tests associated 
-with the project.  
-
-+ `make test_%`: This rule allows you to test a specific unit by specifying 
-its name.  
-
-For example, running `make test_stack_adt_priv` builds and executes the tests 
-specifically designed for the stack implementation file. This targeted testing 
-approach enables efficient debugging and validation of individual units. See
-[Unit Testing](#unit-testing) for more details.  
-
 + `make docs`: Invoking this rule generates HTML documentation using 
 [Doxygen](https://www.doxygen.nl/index.html). Details [here](#documentation).  
+
++ `make tests`: Invoking this rule builds and executes all unit tests associated 
+  with the project.  
+
++ `make test_%`: This rule allows you to test a specific unit by specifying 
+  its name.  
+
+For example, running `make test_stack_adt_priv` builds, executes and displays 
+the results for the tests suite designed for the stack implementation file. This 
+targeted testing approach enables efficient debugging and validation of 
+individual units. See [Unit Testing](#unit-testing) for more details.  
 
 ### Project Motivation
 
@@ -64,7 +64,7 @@ I hope that the knowledge acquired through this project will serve as a
 valuable asset for future endeavors, allowing for growth and reuse of skills 
 and insights.
 
-### Unit Testing
+#### Unit Testing
 
 The project integrates a simple testing framework called 
 [minunit](https://github.com/siu/minunit), which consists of only a header 
@@ -85,7 +85,7 @@ The testing process involves two distinct strategies:
     robustness. Test files appended the suffix `_priv` contain tests that 
     take this approach.  
 
-###  Documentation 
+####  Documentation 
 
 I have integrated [Doxygen](https://www.doxygen.nl/index.html) into this project 
 to familiarize myself with its basics. The generated documentation focuses on

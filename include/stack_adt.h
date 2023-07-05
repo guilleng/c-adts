@@ -9,7 +9,7 @@
  *  + Dynamically allocated. 
  *  + Stack object size can be __fixed__ or __variable__.  
  *
- * ## Nuisances
+ * ## Considerations
  *  + Clients are responsible for managing the memory space of the objects 
  *    loaded to the structure.  
  *  + No type safety.   
