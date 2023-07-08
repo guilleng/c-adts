@@ -22,9 +22,10 @@ struct stack_type
 };
 
 /**************************************************** Private Implementations */ 
-static int is_full(StackADT s)
+
+static inline int is_full(StackADT *s)
 {
-    return (nelems_of_stackadt(s) == s->curr_max_size);
+   return (s->top == s->curr_max_size);
 }
 
 /***************************************************** Public Implementations */
@@ -32,9 +33,9 @@ static int is_full(StackADT s)
 /* 
  * Create variable size stack 
  */
-StackADT create_stackadt(size_t size)
+StackADT *create_stackadt(size_t size)
 {
-    StackADT new;
+    StackADT *new;
 
     if (size == 0)
     {
@@ -68,9 +69,9 @@ StackADT create_stackadt(size_t size)
 /* 
  * Create fixed-size stack
  */
-StackADT create_fixsize_stackadt(size_t size)
+StackADT *create_fixsize_stackadt(size_t size)
 {
-    StackADT new = create_stackadt(size);
+    StackADT *new = create_stackadt(size);
     if (new == NULL)
     {
         return NULL;
@@ -83,7 +84,7 @@ StackADT create_fixsize_stackadt(size_t size)
 /*
  * Destroy stack
  */
-void destroy_stackadt(StackADT s)
+void destroy_stackadt(StackADT *s)
 {
     free(s->contents);
     free(s);
@@ -93,7 +94,7 @@ void destroy_stackadt(StackADT s)
 /* 
  * Return the number of elements `s` currently holds
  */
-size_t nelems_of_stackadt(StackADT s)
+size_t nelems_of_stackadt(StackADT *s)
 {
     return s->top;
 }
@@ -101,7 +102,7 @@ size_t nelems_of_stackadt(StackADT s)
 /* 
  * Tests whether `s` is variable or fixed
  */
-int is_fix_stackadt(StackADT s)
+int is_fix_stackadt(StackADT *s)
 {
     return s->is_fix;
 }
@@ -109,12 +110,12 @@ int is_fix_stackadt(StackADT s)
 /* 
  * Make `s` empty 
  */
-StackADT make_empty_stackadt(StackADT *s)
+StackADT *make_empty_stackadt(StackADT **s)
 {
     /* s has grown, make a new stack for resizing*/
     if ((*s)->curr_max_size > (*s)->min_size) 
     {                                    
-        StackADT new = create_stackadt((*s)->min_size);
+        StackADT *new = create_stackadt((*s)->min_size);
         if (new == NULL)
         {
             perror("make_empty_stackadt (new object): ");
@@ -135,7 +136,7 @@ StackADT make_empty_stackadt(StackADT *s)
 /* 
  * Push operation 
  */
-Element push_stackadt(StackADT s, Element e)
+Element push_stackadt(StackADT *s, Element e)
 {
     /* handle stack overflow of fixed-size stack */
     if (is_fix_stackadt(s) && is_full(s))     
@@ -146,7 +147,8 @@ Element push_stackadt(StackADT s, Element e)
     /* handle full variable-size stack */
     else if (!is_fix_stackadt(s) && is_full(s))
     {
-        void *p = realloc(s->contents, (s->curr_max_size *= 2) * sizeof(Element));
+        Element *p = 
+            realloc(s->contents, (s->curr_max_size *= 2) * sizeof(Element));
         if (p == NULL)
         {
             perror("push_ezstack (Realloc): ");
@@ -162,7 +164,7 @@ Element push_stackadt(StackADT s, Element e)
 /* 
  * Pop operation 
  */
-Element pop_stackadt(StackADT s)
+Element pop_stackadt(StackADT *s)
 {
     double usage = (double) s->top / (double) s->curr_max_size;
 
@@ -176,7 +178,8 @@ Element pop_stackadt(StackADT s)
     /* handle shrinking case */
     if (!is_fix_stackadt(s) && usage < 0.25)
     {
-        void *p = realloc(s->contents, (s->curr_max_size /= 2) * sizeof(Element));
+        Element *p = 
+            realloc(s->contents, (s->curr_max_size /= 2) * sizeof(Element));
         if (p == NULL)
         {
             perror("push_ezstack (Realloc): ");

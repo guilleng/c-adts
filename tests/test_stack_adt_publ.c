@@ -1,7 +1,7 @@
 #include "minunit.h"
 #include "../include/stack_adt.h"
 
-static StackADT s1, s2;
+static StackADT *s1, *s2;
 static char* elements[6] = { "Lorem", "ipsum", "dolor", "sit", "amet", 
                               "consectetur", };
 

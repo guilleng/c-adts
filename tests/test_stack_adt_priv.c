@@ -1,7 +1,7 @@
 #include "minunit.h"
 #include "../src/stack_adt.c"
 
-static StackADT s0, s1, s2, s3;
+static StackADT *s0, *s1, *s2, *s3;
 
 void test_setup(void)
 {
@@ -56,7 +56,6 @@ MU_TEST(test_stack_type)
     mu_check(s2->is_fix == 1);
     mu_check(s3->is_fix == 0);
 } 
-
 /*
  * Test private function
  */

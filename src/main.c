@@ -7,7 +7,7 @@ int main(void)
 {
  /*************************************************************** Stack usage */
     {
-        StackADT s = create_stackadt(2);
+        StackADT *s = create_stackadt(2);
 
         /* Push elements onto the stack */
         push_stackadt(s, "Element 1"); 
