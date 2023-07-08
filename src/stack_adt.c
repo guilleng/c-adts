@@ -75,7 +75,7 @@ StackADT create_fixsize_stackadt(size_t size)
     {
         return NULL;
     }
-    new->is_fix=1;
+    new->is_fix = 1;
 
     return new;
 }
@@ -164,10 +164,10 @@ Element push_stackadt(StackADT s, Element e)
  */
 Element pop_stackadt(StackADT s)
 {
-    double usage = (double) nelems_of_stackadt(s) / (double) s->curr_max_size;
+    double usage = (double) s->top / (double) s->curr_max_size;
 
     /* handle stack underflow */
-    if (nelems_of_stackadt(s) == 0)
+    if (s->top == 0)
     {
         errno = EPERM;
         return NULL;
