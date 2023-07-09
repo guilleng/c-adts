@@ -1,29 +1,3 @@
-/**
- * @file queue_adt.h
- * @brief A simple ADT `queue` module. 
- *
- * ## Key Points
- *  + Relies on `void` pointers to allow manipulating elements of any type. 
- *  + Uses `errno` for managing underflows/overflows.
- *  + Dynamically allocated. 
- *  + Clients can allocate __circular__ and __non-circular__ queues:
- *      + Circular queue (fixed-size): Predefined size that remains constant. 
- *      + Non-circular queue (dynamic/variable-size): Can dynamically adjust its 
- *        size based on the number of elements it holds.
- *
- * ## Considerations
- *  + Clients are responsible for managing the memory space of the objects 
- *    loaded to the structure.  
- *  + No type safety.   
- *
- * To incorporate this data structure into one of your projects, just copy the 
- * header (`.h`), source file (`.c`), and the `/inlcude/common` folder.
- *
- * @note The Doxygen-generated documentation is tailored for the client-side of 
- * the code. Follow <a href="queue_adt_8c-example.html">this link</a> to check 
- * the interface's implementation, which includes specific comments.
- */
-
 #ifndef QUEUE_ADT_H
 #define QUEUE_ADT_H
 
@@ -35,11 +9,9 @@
 /** @endcond */
 #include "common/data_types.h"
 
-/**
- * @brief Incomplete type definition. Implementation details documented in the 
- * source file <a href="queue_adt_8c-example.html">stack_adt.c</a>.
- */
-typedef struct queue_type* QueueADT;
+/** @cond */
+typedef struct queue_type QueueADT;
+/** @endcond */
 
 /**
  * @brief Creates a _non-circular_ (dynamic) queue.
@@ -54,9 +26,9 @@ typedef struct queue_type* QueueADT;
  * interpreted error message is outputted to `stderr`, and `NULL` is returned.
  *
  * @param size The number of elements for initialization.
- * @return Returns a `QueueADT` object on success, `NULL` on failure.
+ * @return Returns a `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT create_queueadt(size_t size);
+QueueADT *create_queueadt(size_t size);
 
 /**
  * @brief Creates a _circular_ (fixed-size) queue.
@@ -66,9 +38,9 @@ QueueADT create_queueadt(size_t size);
  * interpreted error message is outputted to `stderr`, and `NULL` is returned.
  *
  * @param size The maximum number of items the queue allows.
- * @return Returns a `QueueADT` object on success, `NULL` on failure.
+ * @return Returns a `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT create_fixsize_queueadt(size_t size);
+QueueADT *create_fixsize_queueadt(size_t size);
 
 /**
  * @brief Deallocates a `QueueADT` object.
@@ -76,10 +48,10 @@ QueueADT create_fixsize_queueadt(size_t size);
  * @note Client-side is responsible for deallocating the memory in-use by all 
  *       elements of in `q`.  
  *
- * @param q The object queue to deallocate.  
+ * @param q The queue to deallocate.  
  * @return Returns no value. 
  */
-void destroy_queueadt(QueueADT q);
+void destroy_queueadt(QueueADT *q);
 
 /**
  * @brief Returns the number of elements `q` currently holds.
@@ -87,7 +59,7 @@ void destroy_queueadt(QueueADT q);
  * @param q The queue to check.  
  * @return Returns the number of elements currently held by `q`.  
  */
-size_t nelems_of_queueadt(QueueADT q);
+size_t nelems_in_queueadt(QueueADT *q);
 
 /**
  * @brief Tests whether `q` is a dynamic or fixed-size queue.
@@ -95,7 +67,7 @@ size_t nelems_of_queueadt(QueueADT q);
  * @param q The queue to check.  
  * @return Returns non-zero if `q` is circular (fixed-size), zero otherwise.
  */
-int is_circular_queueadt(QueueADT q);
+int is_fix_queueadt(QueueADT *q);
 
 /**
  * @brief Empties the queue pointed to by `queueptr`.
@@ -103,10 +75,10 @@ int is_circular_queueadt(QueueADT q);
  * @note Client-side is responsible for deallocating the memory in-use by the 
  *       elements of the queue `q`.  
  *
- * @param queueptr A pointer to the queue to empty.  
- * @return Returns an `QueueADT` object on success, `NULL` on failure.
+ * @param queueptr A pointer to the queue pointer to be emptied.  
+ * @return Returns an `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT clear_queueadt(QueueADT *queueptr);
+QueueADT *clear_queueadt(QueueADT **queueptr);
 
 /**
  * @brief Returns the first item in the queue without changing the queue.
@@ -117,7 +89,7 @@ QueueADT clear_queueadt(QueueADT *queueptr);
  * @param q The queue to peek from.
  * @return Returns an `Element` on success, `NULL` on failure.
  */
-Element peek_first_queueadt(QueueADT q);
+Element peek_first_queueadt(QueueADT *q);
 
 /**
  * @brief Returns the last item in the queue without changing the queue.
@@ -128,7 +100,7 @@ Element peek_first_queueadt(QueueADT q);
  * @param q The queue to peek from.
  * @return Returns an `Element` on success, `NULL` on failure.
  */
-Element peek_rear_queueadt(QueueADT q);
+Element peek_rear_queueadt(QueueADT *q);
 
 /**
  * @brief Adds an element to the rear of `q`.
@@ -144,7 +116,7 @@ Element peek_rear_queueadt(QueueADT q);
  * @param e The element to append to `q`.
  * @return Returns `e` on success, `NULL` on failure. 
  */
-Element enqueue_queueadt(QueueADT q, Element e);
+Element enqueue_queueadt(QueueADT *q, Element e);
 
 /**
  * @brief Removes the element at the front of `q`.
@@ -163,6 +135,42 @@ Element enqueue_queueadt(QueueADT q, Element e);
  * @param q The queue to dequeue from.
  * @return Returns an `Element` on success, `NULL` on underflow. 
  */
-Element dequeue_queueadt(QueueADT q);
+Element dequeue_queueadt(QueueADT *q);
 
 #endif
+
+/**
+ * @file queue_adt.h
+ *
+ * An opaque data structure which represents a queue. It should only be
+ * accessed through the `*_queueadt` functions.  
+ *
+ * @code{.c}
+ * struct queue_type QueueADT
+ * {
+ *      // No available fields
+ * }
+ * @endcode
+ *
+ * @note See the html rendered version of the C code for the implementation of 
+ * this module here: <a href="queue_adt_8c-example.html">queue_adt.c</a>.
+ *
+ * ---
+ *
+ * ### Key Points
+ *  + Relies on `void` pointers to allow manipulating elements of any type. 
+ *  + Uses `errno` for managing underflows/overflows.
+ *  + Dynamically allocated. 
+ *  + Clients can allocate __circular__ and __non-circular__ queues:
+ *      + Circular queue (fixed-size): Predefined size that remains constant. 
+ *      + Non-circular queue (dynamic/variable-size): Can dynamically adjust its 
+ *        size based on the number of elements it holds.
+ *
+ * ### Considerations
+ *  + Clients are responsible for managing the memory space of the objects 
+ *    loaded to the structure.  
+ *  + No type safety.
+ *
+ * To incorporate this data structure into one of your projects, just copy the 
+ * header (`.h`), source file (`.c`), and the `/inlcude/common` folder.
+ */
