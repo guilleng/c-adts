@@ -9,13 +9,9 @@
 /** @endcond */
 #include "common/data_types.h"
 
-/**
- * @brief An opaque data structure which represents a stack. It should only be
- * accessed through the `*_stackadt` functions.  
- * Implementation details documented in the source file 
- * <a href="stack_adt_8c-example.html">stack_adt.c</a>.
- */
+/** @cond */
 typedef struct stack_type StackADT;
+/** @endcond */
 
 /**
  * @brief Creates a variable-size stack.
@@ -124,23 +120,29 @@ Element pop_stackadt(StackADT *s);
 /**
  * @file stack_adt.h
  *
- * @brief A simple ADT `stack` module.
+ * @code{.c}
+ * struct stack_type StackADT
+ * {
+ *      // No available fields
+ * }
+ * @endcode
  *
- * ## Key Points
+ * @note See the html rendered version of the C code for the implementation of 
+ * this module here: <a href="stack_adt_8c-example.html">stack_adt.c</a>.
+ *
+ * ---
+ *
+ * ### Key Points
  *  + Relies on `void` pointers to allow manipulating elements of any type. 
  *  + Uses `errno` for managing stack underflows/overflows. 
  *  + Dynamically allocated. 
  *  + Stack object size can be __fixed__ or __variable__.  
  *
- * ## Considerations
+ * ### Considerations
  *  + Clients are responsible for managing the memory space of the objects 
  *    loaded to the structure.  
  *  + No type safety.   
  *
  * To incorporate this data structure into one of your projects, just copy the 
  * header (`.h`), source file (`.c`), and the `/inlcude/common` folder.
- *
- * @note The generated html documentation is tailored for the client-side of 
- * the code. Follow <a href="stack_adt_8c-example.html">this link</a> to check 
- * the interface's implementation, for internal details. 
  */
