@@ -79,7 +79,7 @@
     <detaileddescription title=""/>
     <memberdef>
       <inlineclasses title=""/>
-      <typedefs title=""/>
+      <typedefs visible = "no" title=""/>
       <enums title=""/>
       <services title=""/>
       <interfaces title=""/>
@@ -128,7 +128,8 @@
 
   <!-- Layout definition for a file page -->
   <file>
-    <briefdescription visible="yes"/>
+    <briefdescription visible="no"/>
+    <detaileddescription title="Description"/>
     <includes visible="$SHOW_INCLUDE_FILES"/>
     <includegraph visible="$INCLUDE_GRAPH"/>
     <includedbygraph visible="$INCLUDED_BY_GRAPH"/>
@@ -136,7 +137,7 @@
     <memberdecl>
       <interfaces visible="yes" title=""/>
       <classes visible="yes" title=""/>
-      <structs visible="yes" title=""/>
+      <structs visible="no" title=""/>
       <exceptions visible="yes" title=""/>
       <namespaces visible="yes" title=""/>
       <constantgroups visible="yes" title=""/>
@@ -145,11 +146,10 @@
       <sequences title=""/>
       <dictionaries title=""/>
       <enums title=""/>
-      <functions title=""/>
+      <functions title="List of Interface Functions"/>
       <variables title=""/>
       <membergroups visible="yes"/>
     </memberdecl>
-    <detaileddescription title=""/>
     <memberdef>
       <inlineclasses title=""/>
       <defines title=""/>
@@ -157,7 +157,7 @@
       <sequences title=""/>
       <dictionaries title=""/>
       <enums title=""/>
-      <functions title=""/>
+      <functions title="Documentation of Interface Functions"/>
       <variables title=""/>
     </memberdef>
     <authorsection/>
