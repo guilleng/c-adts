@@ -37,6 +37,15 @@ static inline int is_full(QueueADT *q)
     return (q->nelems == q->curr_max_size);
 }
 
+/*
+ * Returns non-zero if `q` is * circular (fixed-size)
+ */
+static inline int is_fix(QueueADT *q)
+{
+    return q->is_fix;
+}
+
+
 /* 
  * Copies into `new` `q->contents[]` shifting to lower indexes if necessary.
  */ 
@@ -110,28 +119,28 @@ static inline Element *resize_contents_array(QueueADT *q, double factor)
 /*
  * Create non-circular (dynamic) queue
  */
-QueueADT *create_queueadt(size_t size)
+QueueADT *queueadt_new(size_t size)
 {
     QueueADT *new;
 
     if (size == 0)
     {
         errno = EPERM;
-        perror("create_queueadt called with 0 size parameter: ");
+        perror("queueadt_new called with 0 size parameter: ");
         return NULL;
     }
 
     new = malloc(sizeof(struct queue_type));
     if (new == NULL)
     { 
-        perror("create_queueadt malloc failed allocating struct queue_type: ");
+        perror("queueadt_new malloc failed allocating struct queue_type: ");
         return NULL;
     }
     new->contents = malloc(size * sizeof(Element));
 
     if (new->contents == NULL)
     {
-        perror("create_queueadt malloc failed allocating Element array: ");
+        perror("queueadt_new malloc failed allocating Element array: ");
         return NULL;
     }
 
@@ -148,9 +157,9 @@ QueueADT *create_queueadt(size_t size)
 /*
  * Create circular (fixed-size) queue
  */
-QueueADT *create_fixsize_queueadt(size_t size)
+QueueADT *queuadt_new_circular(size_t size)
 {
-    QueueADT *new = create_queueadt(size);
+    QueueADT *new = queueadt_new(size);
     if (new == NULL)
     {
         return NULL;
@@ -163,7 +172,7 @@ QueueADT *create_fixsize_queueadt(size_t size)
 /*
  * Destroy queue
  */
-void destroy_queueadt(QueueADT *q)
+void queuadt_destroy(QueueADT *q)
 {
     free(q->contents);
     free(q);
@@ -173,35 +182,26 @@ void destroy_queueadt(QueueADT *q)
 /*
  * Return the number of elements `q` currently holds
  */
-size_t nelems_in_queueadt(QueueADT *q)
+size_t queueadt_nelems(QueueADT *q)
 {
     return q->nelems;
 }
 
 /*
- * Test whether `q` is dynamic or fixed-size. Returns non-zero if `q` is 
- * circular (fixed-size)
- */
-int is_fix_queueadt(QueueADT *q)
-{
-    return q->is_fix;
-}
-
-/*
  * Make `q` empty
  */
-QueueADT *clear_queueadt(QueueADT **q)
+QueueADT *queueadt_clear(QueueADT **q)
 {
     /* q has grown, make a new queue for resizing*/
     if ((*q)->curr_max_size > (*q)->min_size) 
     {                                    
-        QueueADT *new = create_queueadt((*q)->min_size);
+        QueueADT *new = queueadt_new((*q)->min_size);
         if (new == NULL)
         {
-            perror("clear_queueadt (new object): ");
+            perror("queueadt_clear (new object): ");
             return NULL;
         }
-        destroy_queueadt(*q);
+        queuadt_destroy(*q);
         *q = new;
         return *q;
     }
@@ -219,10 +219,10 @@ QueueADT *clear_queueadt(QueueADT **q)
 /*
  * Return the first item in the queue without changing the queue
  */
-Element peek_first_queueadt(QueueADT *q)
+Element queueadt_peek_first(QueueADT *q)
 {
     /* handle queue underflow */
-    if (nelems_in_queueadt(q) == 0)
+    if (queueadt_nelems(q) == 0)
     {
         errno = EPERM;
         return NULL;
@@ -234,10 +234,10 @@ Element peek_first_queueadt(QueueADT *q)
 /*
  * Return the last item in the queue without changing the queue
  */
-Element peek_rear_queueadt(QueueADT *q)
+Element queueadt_peek_rear(QueueADT *q)
 {
     /* handle queue underflow */
-    if (nelems_in_queueadt(q) == 0)
+    if (queueadt_nelems(q) == 0)
     {
         errno = EPERM;
         return NULL;
@@ -249,16 +249,16 @@ Element peek_rear_queueadt(QueueADT *q)
 /*
  * Append element to `q`
  */
-Element enqueue_queueadt(QueueADT *q, Element e)
+Element queueadt_enqueue(QueueADT *q, Element e)
 {
     /* handle queue overflow */
-    if (is_fix_queueadt(q) && is_full(q))
+    if (is_fix(q) && is_full(q))
     {
         errno = EPERM;
         return NULL;
     }
     /* handle dynamic queue */
-    if (!is_fix_queueadt(q) && is_full(q))
+    if (!is_fix(q) && is_full(q))
     {
         if (resize_contents_array(q, TWICE) == NULL)
         {
@@ -281,7 +281,7 @@ Element enqueue_queueadt(QueueADT *q, Element e)
 /*
  * Remove element at the front of `q`
  */
-Element dequeue_queueadt(QueueADT *q)
+Element queueadt_dequeue(QueueADT *q)
 {
     Element ret;
     double usage = (double) q->nelems / (double) q->curr_max_size;
@@ -293,7 +293,7 @@ Element dequeue_queueadt(QueueADT *q)
         return NULL;
     }
 
-    else if (!is_fix_queueadt(q) && usage < 0.25)
+    else if (!is_fix(q) && usage < 0.25)
     {
         /* make it small */;
         if (resize_contents_array(q, HALF) == NULL)
