@@ -124,7 +124,7 @@ MU_TEST(test_size_halves_on_clear)
     }
     mu_check(s1->curr_max_size == 65536);
 
-    s1 = cadtstack_clear(&s1);
+    mu_check(cadtstack_clear(s1) != NULL);
     mu_check(s1->curr_max_size == s1->min_size);
 }
 

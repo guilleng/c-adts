@@ -35,7 +35,7 @@ MU_TEST(test_ezstack_fixsize)
 
     mu_assert_string_eq("ipsum", cadtstack_pop(s1));
 
-    cadtstack_clear(&s1);
+    cadtstack_clear(s1);
 
     /* Stack underflow */
     errno = 0;
@@ -70,7 +70,7 @@ MU_TEST(test_ezstack_notfixsize)
     mu_assert_string_eq("amet", cadtstack_pop(s2));
 
     mu_check(cadtstack_nelems(s2) == 16);
-    cadtstack_clear(&s2);
+    s2 = cadtstack_clear(s2);
 
     /* Stack underflow */
     errno = 0;

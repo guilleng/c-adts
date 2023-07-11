@@ -113,27 +113,31 @@ size_t cadtstack_nelems(StackADT *s)
 /* 
  * Make `s` empty 
  */
-StackADT *cadtstack_clear(StackADT **s)
+StackADT *cadtstack_clear(StackADT *s)
 {
     /* s has grown, make a new stack for resizing*/
-    if ((*s)->curr_max_size > (*s)->min_size) 
+    if (s->curr_max_size > s->min_size) 
     {                                    
-        StackADT *new = cadtstack_new((*s)->min_size);
+        Element *new = malloc(s->min_size * sizeof(Element));
+
         if (new == NULL)
         {
-            perror("cadtstack_clear (new object): ");
+            perror("cadtstack_clear malloc failed allocating Element: ");
             return NULL;
         }
-        cadtstack_destroy(*s);
-        *s = new;
-        return *s;
+
+        free(s->contents);
+        s->contents = new;
+        s->curr_max_size = s->min_size;
+        s->top = 0;
+        return s;
     }
     /* s hasn't grown or is fixed in size */
     else                                  
     {                                     
-        (*s)->top = 0;
+        s->top = 0;
     }
-    return *s;
+    return s;
 }
 
 /* 

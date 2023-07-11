@@ -62,15 +62,15 @@ void cadtstack_destroy(StackADT *s);
 size_t cadtstack_nelems(StackADT *s);
 
 /**
- * @brief Empties the stack pointed to by `stackptr`.
+ * @brief Empties the stack `s`.
  *
  * @note Client-side is responsible for deallocating the memory in-use by all 
  *       elements in `s`.  
  *
- * @param stackptr A pointer to the stack pointer to be emptied. 
+ * @param s The stack to be emptied. 
  * @return Returns a `StackADT` handle on success, `NULL` on failure.
  */
-StackADT *cadtstack_clear(StackADT **stackptr);
+StackADT *cadtstack_clear(StackADT *s);
 
 /**
  * @brief Pushes an `Element` into a stack.
