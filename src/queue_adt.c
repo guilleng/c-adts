@@ -14,7 +14,7 @@
  *  + The array's minimum size.
  *  + The array's current maximum size.
  *  + A flag that determines whether the stack is of fixed size or may possibly
- *    grow 
+
  */
 struct queue_type
 {
@@ -136,8 +136,8 @@ QueueADT *cadtqueue_new(size_t size)
         perror("cadtqueue_new malloc failed allocating struct queue_type: ");
         return NULL;
     }
+    
     new->contents = malloc(size * sizeof(Element));
-
     if (new->contents == NULL)
     {
         perror("cadtqueue_new malloc failed allocating Element array: ");
@@ -190,30 +190,27 @@ size_t cadtqueue_nelems(QueueADT *q)
 /*
  * Make `q` empty
  */
-QueueADT *cadtqueue_clear(QueueADT **q)
+QueueADT *cadtqueue_clear(QueueADT *q)
 {
     /* q has grown, make a new queue for resizing*/
-    if ((*q)->curr_max_size > (*q)->min_size) 
+    if (q->curr_max_size > q->min_size) 
     {                                    
-        QueueADT *new = cadtqueue_new((*q)->min_size);
-        if (new == NULL)
+        Element *new = malloc(q->min_size * sizeof(Element));
+        if (new== NULL)
         {
-            perror("cadtqueue_clear (new object): ");
+            perror("cadtqueue_clear malloc failed allocating Element array: ");
             return NULL;
         }
-        cadtqueue_destroy(*q);
-        *q = new;
-        return *q;
+
+        free(q->contents);
+        q->contents = new;
     }
     /* q hasn't grown or is fixed in size */
-    else                                  
-    {                                     
-        (*q)->head = 0;
-        (*q)->tail = 0;
-        (*q)->nelems = 0;
-        (*q)->curr_max_size = (*q)->min_size;
-    }
-    return *q;
+    q->head = 0;
+    q->tail = 0;
+    q->nelems = 0;
+    q->curr_max_size = q->min_size;
+    return q;
 }
 
 /*

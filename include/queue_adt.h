@@ -71,7 +71,7 @@ size_t cadtqueue_nelems(QueueADT *q);
  * @param queueptr A pointer to the queue pointer to be emptied.  
  * @return Returns an `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT *cadtqueue_clear(QueueADT **queueptr);
+QueueADT *cadtqueue_clear(QueueADT *queueptr);
 
 /**
  * @brief Returns the first item in the queue without changing the queue.
