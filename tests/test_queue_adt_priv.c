@@ -5,19 +5,19 @@ static QueueADT *size_3_dyn, *size_3_fix, *size_1_dyn, *size_1_fix;
 
 void test_setup(void)
 {
-    size_3_dyn = queueadt_new(3);
-    size_3_fix = queuadt_new_circular(3);
-    size_1_dyn = queueadt_new(1);
-    size_1_fix = queuadt_new_circular(1);
+    size_3_dyn = cadtqueue_new(3);
+    size_3_fix = cadtqueue_new_circular(3);
+    size_1_dyn = cadtqueue_new(1);
+    size_1_fix = cadtqueue_new_circular(1);
     return;
 }
 
 void test_teardown(void)
 {
-    queuadt_destroy(size_3_dyn);
-    queuadt_destroy(size_3_fix);
-    queuadt_destroy(size_1_dyn);
-    queuadt_destroy(size_1_fix);
+    cadtqueue_destroy(size_3_dyn);
+    cadtqueue_destroy(size_3_fix);
+    cadtqueue_destroy(size_1_dyn);
+    cadtqueue_destroy(size_1_fix);
     return;
 }
 
@@ -27,12 +27,12 @@ void test_teardown(void)
 MU_TEST(test_queue_type)
 {
     errno = 0;
-    mu_assert(queueadt_new(0) == NULL, 
+    mu_assert(cadtqueue_new(0) == NULL, 
             "Zero size queues should not be allowed");
     mu_check(errno = EPERM);
 
     errno = 0;
-    mu_assert(queuadt_new_circular(0) == NULL, 
+    mu_assert(cadtqueue_new_circular(0) == NULL, 
             "Zero size queues should not be allowed");
     mu_check(errno = EPERM);
 
@@ -55,29 +55,29 @@ MU_TEST(test_queue_type)
 MU_TEST(test_enqueue)
 {
     /* Size 1 queue */
-    mu_assert_string_eq("one", queueadt_enqueue(size_1_fix, "one"));
+    mu_assert_string_eq("one", cadtqueue_enqueue(size_1_fix, "one"));
     errno = 0;
-    mu_assert(queueadt_enqueue(size_1_fix, "two") == NULL, 
+    mu_assert(cadtqueue_enqueue(size_1_fix, "two") == NULL, 
             "Queue should overflow");
     mu_check(errno = EPERM);
 
     /* Size 3 queue */
-    mu_assert_string_eq("one", queueadt_enqueue(size_3_fix, "one"));
+    mu_assert_string_eq("one", cadtqueue_enqueue(size_3_fix, "one"));
     mu_check(size_3_fix->head == 0);
     mu_check(size_3_fix->tail == 0);
     mu_check(size_3_fix->nelems == 1);
 
-    mu_assert_string_eq("two", queueadt_enqueue(size_3_fix, "two"));
+    mu_assert_string_eq("two", cadtqueue_enqueue(size_3_fix, "two"));
     mu_check(size_3_fix->head == 0);
     mu_check(size_3_fix->tail == 1);
     mu_check(size_3_fix->nelems == 2);
 
-    mu_assert_string_eq("three", queueadt_enqueue(size_3_fix, "three"));
+    mu_assert_string_eq("three", cadtqueue_enqueue(size_3_fix, "three"));
     mu_check(size_3_fix->head == 0);
     mu_check(size_3_fix->tail == 2);
     mu_check(size_3_fix->nelems == 3);
     errno = 0;
-    mu_assert(queueadt_enqueue(size_3_fix, "X") == NULL, 
+    mu_assert(cadtqueue_enqueue(size_3_fix, "X") == NULL, 
             "Queue should overflow");
     mu_check(errno = EPERM);
 }
@@ -99,24 +99,24 @@ MU_TEST(test_dequeue)
     size_3_fix->nelems = 3;
 
     /* Tests */
-    mu_assert_string_eq("a", queueadt_dequeue(size_3_fix));
+    mu_assert_string_eq("a", cadtqueue_dequeue(size_3_fix));
     mu_check(size_3_fix->head == 1);
     mu_check(size_3_fix->tail == 2);
     mu_check(size_3_fix->nelems == 2);
 
-    mu_assert_string_eq("b", queueadt_dequeue(size_3_fix));
+    mu_assert_string_eq("b", cadtqueue_dequeue(size_3_fix));
     mu_check(size_3_fix->head == 2);
     mu_check(size_3_fix->tail == 2);
     mu_check(size_3_fix->nelems == 1);
 
-    mu_assert_string_eq("c", queueadt_dequeue(size_3_fix));
+    mu_assert_string_eq("c", cadtqueue_dequeue(size_3_fix));
     mu_check(size_3_fix->head == 2);
     mu_check(size_3_fix->tail == 2);
     mu_check(size_3_fix->nelems == 0);
-    mu_assert_string_eq("three", queueadt_enqueue(size_3_fix, "three"));
+    mu_assert_string_eq("three", cadtqueue_enqueue(size_3_fix, "three"));
 
     errno = 0;
-    mu_assert(queueadt_dequeue(size_1_fix) == NULL, 
+    mu_assert(cadtqueue_dequeue(size_1_fix) == NULL, 
             "Queue should overflow");
     mu_check(errno = EPERM);
 
@@ -128,14 +128,14 @@ MU_TEST(test_dequeue)
 MU_TEST(test_wraparaoud)
 {
     /* Set up */
-    queueadt_enqueue(size_3_fix, "a");
-    queueadt_enqueue(size_3_fix, "b");
-    queueadt_enqueue(size_3_fix, "c");
+    cadtqueue_enqueue(size_3_fix, "a");
+    cadtqueue_enqueue(size_3_fix, "b");
+    cadtqueue_enqueue(size_3_fix, "c");
     /* Queue is now: | a | b | c | */
-    queueadt_dequeue(size_3_fix);
-    queueadt_dequeue(size_3_fix);
+    cadtqueue_dequeue(size_3_fix);
+    cadtqueue_dequeue(size_3_fix);
     /* Queue is now: |   |   | c | */
-    queueadt_enqueue(size_3_fix, "d");
+    cadtqueue_enqueue(size_3_fix, "d");
     /* Queue is now: | d |   | c | */
 
     /* Tests */
@@ -146,8 +146,8 @@ MU_TEST(test_wraparaoud)
     mu_assert_string_eq("c", size_3_fix->contents[2]);
 
     /* Set up again */
-    queueadt_dequeue(size_3_fix);
-    queueadt_enqueue(size_3_fix, "e");
+    cadtqueue_dequeue(size_3_fix);
+    cadtqueue_enqueue(size_3_fix, "e");
     /* Queue should be now: | d | e |   | */
 
     /* Check */
@@ -211,7 +211,7 @@ MU_TEST(test_double_contents_size)
     size_3_dyn->nelems = 6;
 
     /* Double the size by inserting an element */
-    queueadt_enqueue(size_3_dyn, "j");
+    cadtqueue_enqueue(size_3_dyn, "j");
 
     /* Check new internals: 
      *
@@ -229,11 +229,11 @@ MU_TEST(test_double_contents_size)
     mu_assert_string_eq("j", size_3_dyn->contents[6]);
 
     /* Some more tests with a size 1 queue */
-    queueadt_enqueue(size_1_dyn, "a");
-    queueadt_enqueue(size_1_dyn, "b");
-    queueadt_enqueue(size_1_dyn, "c");
-    queueadt_enqueue(size_1_dyn, "d");
-    queueadt_enqueue(size_1_dyn, "e");
+    cadtqueue_enqueue(size_1_dyn, "a");
+    cadtqueue_enqueue(size_1_dyn, "b");
+    cadtqueue_enqueue(size_1_dyn, "c");
+    cadtqueue_enqueue(size_1_dyn, "d");
+    cadtqueue_enqueue(size_1_dyn, "e");
     mu_assert_string_eq("a", size_1_dyn->contents[0]);
     mu_assert_string_eq("c", size_1_dyn->contents[2]);
     mu_assert_string_eq("e", size_1_dyn->contents[4]);
@@ -289,14 +289,14 @@ MU_TEST(test_halve_content_size)
     mu_assert_string_eq("s", size_3_dyn->contents[11]);
 
     /* Testing if dequeueing automatically triggers resizing */
-    queueadt_dequeue(size_3_dyn); /* pop h */
-    queueadt_dequeue(size_3_dyn); /* pop i */
-    queueadt_dequeue(size_3_dyn); /* pop j */
-    queueadt_dequeue(size_3_dyn); /* pop k */
-    queueadt_dequeue(size_3_dyn); /* pop l */
-    queueadt_dequeue(size_3_dyn); /* pop m */
-    queueadt_dequeue(size_3_dyn); /* pop n */
-    queueadt_dequeue(size_3_dyn); /* pop o */
+    cadtqueue_dequeue(size_3_dyn); /* pop h */
+    cadtqueue_dequeue(size_3_dyn); /* pop i */
+    cadtqueue_dequeue(size_3_dyn); /* pop j */
+    cadtqueue_dequeue(size_3_dyn); /* pop k */
+    cadtqueue_dequeue(size_3_dyn); /* pop l */
+    cadtqueue_dequeue(size_3_dyn); /* pop m */
+    cadtqueue_dequeue(size_3_dyn); /* pop n */
+    cadtqueue_dequeue(size_3_dyn); /* pop o */
     /* 
      * Queue should be now: |   | p | q | r | s |   |   | ...|
      *                      |   | hd|   |   | tl|   |   | ...|

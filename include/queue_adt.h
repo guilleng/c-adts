@@ -29,7 +29,7 @@ typedef struct queue_type QueueADT;
  * @param size The number of elements for initialization.
  * @return Returns a `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT *queueadt_new(size_t size);
+QueueADT *cadtqueue_new(size_t size);
 
 /**
  * @brief Creates a _circular_ (fixed-size) queue.
@@ -41,7 +41,7 @@ QueueADT *queueadt_new(size_t size);
  * @param size The maximum number of items the queue allows.
  * @return Returns a `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT *queuadt_new_circular(size_t size);
+QueueADT *cadtqueue_new_circular(size_t size);
 
 /**
  * @brief Deallocates a `QueueADT` object.
@@ -52,7 +52,7 @@ QueueADT *queuadt_new_circular(size_t size);
  * @param q The queue to deallocate.  
  * @return Returns no value. 
  */
-void queuadt_destroy(QueueADT *q);
+void cadtqueue_destroy(QueueADT *q);
 
 /**
  * @brief Returns the number of elements `q` currently holds.
@@ -60,7 +60,7 @@ void queuadt_destroy(QueueADT *q);
  * @param q The queue to check.  
  * @return Returns the number of elements currently held by `q`.  
  */
-size_t queueadt_nelems(QueueADT *q);
+size_t cadtqueue_nelems(QueueADT *q);
 
 /**
  * @brief Empties the queue pointed to by `queueptr`.
@@ -71,7 +71,7 @@ size_t queueadt_nelems(QueueADT *q);
  * @param queueptr A pointer to the queue pointer to be emptied.  
  * @return Returns an `QueueADT` handle on success, `NULL` on failure.
  */
-QueueADT *queueadt_clear(QueueADT **queueptr);
+QueueADT *cadtqueue_clear(QueueADT **queueptr);
 
 /**
  * @brief Returns the first item in the queue without changing the queue.
@@ -82,7 +82,7 @@ QueueADT *queueadt_clear(QueueADT **queueptr);
  * @param q The queue to peek from.
  * @return Returns an `Element` on success, `NULL` on failure.
  */
-Element queueadt_peek_first(QueueADT *q);
+Element cadtqueue_peek_first(QueueADT *q);
 
 /**
  * @brief Returns the last item in the queue without changing the queue.
@@ -93,7 +93,7 @@ Element queueadt_peek_first(QueueADT *q);
  * @param q The queue to peek from.
  * @return Returns an `Element` on success, `NULL` on failure.
  */
-Element queueadt_peek_rear(QueueADT *q);
+Element cadtqueue_peek_rear(QueueADT *q);
 
 /**
  * @brief Adds an element to the rear of `q`.
@@ -109,7 +109,7 @@ Element queueadt_peek_rear(QueueADT *q);
  * @param e The element to append to `q`.
  * @return Returns `e` on success, `NULL` on failure. 
  */
-Element queueadt_enqueue(QueueADT *q, Element e);
+Element cadtqueue_enqueue(QueueADT *q, Element e);
 
 /**
  * @brief Removes the element at the front of `q`.
@@ -128,7 +128,7 @@ Element queueadt_enqueue(QueueADT *q, Element e);
  * @param q The queue to dequeue from.
  * @return Returns an `Element` on success, `NULL` on underflow. 
  */
-Element queueadt_dequeue(QueueADT *q);
+Element cadtqueue_dequeue(QueueADT *q);
 
 #endif
 

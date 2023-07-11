@@ -119,28 +119,28 @@ static inline Element *resize_contents_array(QueueADT *q, double factor)
 /*
  * Create non-circular (dynamic) queue
  */
-QueueADT *queueadt_new(size_t size)
+QueueADT *cadtqueue_new(size_t size)
 {
     QueueADT *new;
 
     if (size == 0)
     {
         errno = EPERM;
-        perror("queueadt_new called with 0 size parameter: ");
+        perror("cadtqueue_new called with 0 size parameter: ");
         return NULL;
     }
 
     new = malloc(sizeof(struct queue_type));
     if (new == NULL)
     { 
-        perror("queueadt_new malloc failed allocating struct queue_type: ");
+        perror("cadtqueue_new malloc failed allocating struct queue_type: ");
         return NULL;
     }
     new->contents = malloc(size * sizeof(Element));
 
     if (new->contents == NULL)
     {
-        perror("queueadt_new malloc failed allocating Element array: ");
+        perror("cadtqueue_new malloc failed allocating Element array: ");
         return NULL;
     }
 
@@ -157,9 +157,9 @@ QueueADT *queueadt_new(size_t size)
 /*
  * Create circular (fixed-size) queue
  */
-QueueADT *queuadt_new_circular(size_t size)
+QueueADT *cadtqueue_new_circular(size_t size)
 {
-    QueueADT *new = queueadt_new(size);
+    QueueADT *new = cadtqueue_new(size);
     if (new == NULL)
     {
         return NULL;
@@ -172,7 +172,7 @@ QueueADT *queuadt_new_circular(size_t size)
 /*
  * Destroy queue
  */
-void queuadt_destroy(QueueADT *q)
+void cadtqueue_destroy(QueueADT *q)
 {
     free(q->contents);
     free(q);
@@ -182,7 +182,7 @@ void queuadt_destroy(QueueADT *q)
 /*
  * Return the number of elements `q` currently holds
  */
-size_t queueadt_nelems(QueueADT *q)
+size_t cadtqueue_nelems(QueueADT *q)
 {
     return q->nelems;
 }
@@ -190,18 +190,18 @@ size_t queueadt_nelems(QueueADT *q)
 /*
  * Make `q` empty
  */
-QueueADT *queueadt_clear(QueueADT **q)
+QueueADT *cadtqueue_clear(QueueADT **q)
 {
     /* q has grown, make a new queue for resizing*/
     if ((*q)->curr_max_size > (*q)->min_size) 
     {                                    
-        QueueADT *new = queueadt_new((*q)->min_size);
+        QueueADT *new = cadtqueue_new((*q)->min_size);
         if (new == NULL)
         {
-            perror("queueadt_clear (new object): ");
+            perror("cadtqueue_clear (new object): ");
             return NULL;
         }
-        queuadt_destroy(*q);
+        cadtqueue_destroy(*q);
         *q = new;
         return *q;
     }
@@ -219,10 +219,10 @@ QueueADT *queueadt_clear(QueueADT **q)
 /*
  * Return the first item in the queue without changing the queue
  */
-Element queueadt_peek_first(QueueADT *q)
+Element cadtqueue_peek_first(QueueADT *q)
 {
     /* handle queue underflow */
-    if (queueadt_nelems(q) == 0)
+    if (cadtqueue_nelems(q) == 0)
     {
         errno = EPERM;
         return NULL;
@@ -234,10 +234,10 @@ Element queueadt_peek_first(QueueADT *q)
 /*
  * Return the last item in the queue without changing the queue
  */
-Element queueadt_peek_rear(QueueADT *q)
+Element cadtqueue_peek_rear(QueueADT *q)
 {
     /* handle queue underflow */
-    if (queueadt_nelems(q) == 0)
+    if (cadtqueue_nelems(q) == 0)
     {
         errno = EPERM;
         return NULL;
@@ -249,7 +249,7 @@ Element queueadt_peek_rear(QueueADT *q)
 /*
  * Append element to `q`
  */
-Element queueadt_enqueue(QueueADT *q, Element e)
+Element cadtqueue_enqueue(QueueADT *q, Element e)
 {
     /* handle queue overflow */
     if (is_fix(q) && is_full(q))
@@ -281,7 +281,7 @@ Element queueadt_enqueue(QueueADT *q, Element e)
 /*
  * Remove element at the front of `q`
  */
-Element queueadt_dequeue(QueueADT *q)
+Element cadtqueue_dequeue(QueueADT *q)
 {
     Element ret;
     double usage = (double) q->nelems / (double) q->curr_max_size;
