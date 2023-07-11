@@ -23,9 +23,20 @@ struct stack_type
 
 /**************************************************** Private Implementations */ 
 
+/* 
+ * Return non-zero if `s` is full
+ */
 static inline int is_full(StackADT *s)
 {
    return (s->top == s->curr_max_size);
+}
+
+/* 
+ * Tests whether `s` is variable or fixed
+ */
+static inline int is_fix(StackADT *s)
+{
+    return s->is_fix;
 }
 
 /***************************************************** Public Implementations */
@@ -33,28 +44,28 @@ static inline int is_full(StackADT *s)
 /* 
  * Create variable size stack 
  */
-StackADT *create_stackadt(size_t size)
+StackADT *cadtstack_new(size_t size)
 {
     StackADT *new;
 
     if (size == 0)
     {
         errno = EPERM;
-        perror("create_stackadt called with 0 size parameter: ");
+        perror("cadtstack_new called with 0 size parameter: ");
         return NULL;
     }
 
     new = malloc(sizeof (struct stack_type));
     if (new == NULL)
     {
-        perror("create_stackadt malloc failed allocating struct stack_type: ");
+        perror("cadtstack_new malloc failed allocating struct stack_type: ");
         return NULL;
     }
     new->contents = malloc(size * sizeof(Element));
 
     if (new->contents == NULL)
     {
-        perror("create_stackadt malloc failed allocating Element: ");
+        perror("cadtstack_new malloc failed allocating Element: ");
         return NULL;
     }
 
@@ -69,9 +80,9 @@ StackADT *create_stackadt(size_t size)
 /* 
  * Create fixed-size stack
  */
-StackADT *create_fixsize_stackadt(size_t size)
+StackADT *cadtstack_new_fix(size_t size)
 {
-    StackADT *new = create_stackadt(size);
+    StackADT *new = cadtstack_new(size);
     if (new == NULL)
     {
         return NULL;
@@ -84,7 +95,7 @@ StackADT *create_fixsize_stackadt(size_t size)
 /*
  * Destroy stack
  */
-void destroy_stackadt(StackADT *s)
+void cadtstack_destroy(StackADT *s)
 {
     free(s->contents);
     free(s);
@@ -94,34 +105,26 @@ void destroy_stackadt(StackADT *s)
 /* 
  * Return the number of elements `s` currently holds
  */
-size_t nelems_of_stackadt(StackADT *s)
+size_t cadtstack_nelems(StackADT *s)
 {
     return s->top;
 }
 
 /* 
- * Tests whether `s` is variable or fixed
- */
-int is_fix_stackadt(StackADT *s)
-{
-    return s->is_fix;
-}
-
-/* 
  * Make `s` empty 
  */
-StackADT *make_empty_stackadt(StackADT **s)
+StackADT *cadtstack_clear(StackADT **s)
 {
     /* s has grown, make a new stack for resizing*/
     if ((*s)->curr_max_size > (*s)->min_size) 
     {                                    
-        StackADT *new = create_stackadt((*s)->min_size);
+        StackADT *new = cadtstack_new((*s)->min_size);
         if (new == NULL)
         {
-            perror("make_empty_stackadt (new object): ");
+            perror("cadtstack_clear (new object): ");
             return NULL;
         }
-        destroy_stackadt(*s);
+        cadtstack_destroy(*s);
         *s = new;
         return *s;
     }
@@ -136,16 +139,16 @@ StackADT *make_empty_stackadt(StackADT **s)
 /* 
  * Push operation 
  */
-Element push_stackadt(StackADT *s, Element e)
+Element cadtstack_push(StackADT *s, Element e)
 {
     /* handle stack overflow of fixed-size stack */
-    if (is_fix_stackadt(s) && is_full(s))     
+    if (is_fix(s) && is_full(s))     
     {
         errno = EPERM;
         return NULL; 
     }
     /* handle full variable-size stack */
-    else if (!is_fix_stackadt(s) && is_full(s))
+    else if (!is_fix(s) && is_full(s))
     {
         Element *p = 
             realloc(s->contents, (s->curr_max_size *= 2) * sizeof(Element));
@@ -164,7 +167,7 @@ Element push_stackadt(StackADT *s, Element e)
 /* 
  * Pop operation 
  */
-Element pop_stackadt(StackADT *s)
+Element cadtstack_pop(StackADT *s)
 {
     double usage = (double) s->top / (double) s->curr_max_size;
 
@@ -176,7 +179,7 @@ Element pop_stackadt(StackADT *s)
     }
 
     /* handle shrinking case */
-    if (!is_fix_stackadt(s) && usage < 0.25)
+    if (!is_fix(s) && usage < 0.25)
     {
         Element *p = 
             realloc(s->contents, (s->curr_max_size /= 2) * sizeof(Element));

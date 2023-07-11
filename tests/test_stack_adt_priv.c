@@ -5,19 +5,19 @@ static StackADT *s0, *s1, *s2, *s3;
 
 void test_setup(void)
 {
-    s0 = create_fixsize_stackadt(1);
-    s1 = create_stackadt(1);
-    s2 = create_fixsize_stackadt(5);
-    s3 = create_stackadt(5);
+    s0 = cadtstack_new_fix(1);
+    s1 = cadtstack_new(1);
+    s2 = cadtstack_new_fix(5);
+    s3 = cadtstack_new(5);
     return;
 }
 
 void test_teardown(void)
 {
-    destroy_stackadt(s0);
-    destroy_stackadt(s1);
-    destroy_stackadt(s2);
-    destroy_stackadt(s3);
+    cadtstack_destroy(s0);
+    cadtstack_destroy(s1);
+    cadtstack_destroy(s2);
+    cadtstack_destroy(s3);
     return;
 }
 
@@ -27,12 +27,12 @@ void test_teardown(void)
 MU_TEST(test_stack_type)
 {
     errno = 0;
-    mu_assert(create_stackadt(0) == NULL, 
+    mu_assert(cadtstack_new(0) == NULL, 
             "Zero size stacks should not be allowed");
     mu_check(errno = EPERM);
 
     errno = 0;
-    mu_assert(create_stackadt(0) == NULL, 
+    mu_assert(cadtstack_new(0) == NULL, 
             "Zero size stacks should not be allowed");
     mu_check(errno = EPERM);
 
@@ -62,11 +62,13 @@ MU_TEST(test_stack_type)
 MU_TEST(test_is_full)
 {
     mu_check(is_full(s0) == 0);
-    push_stackadt(s0, "");
+    cadtstack_push(s0, "");
     mu_check(is_full(s0) == 1);
-    push_stackadt(s3, "");
-    push_stackadt(s3, "");
+    cadtstack_push(s3, "");
+    cadtstack_push(s3, "");
     mu_check(is_full(s3) == 0);
+    
+    mu_check(is_fix(s3) == 0);
 }
 
 /* 
@@ -76,13 +78,13 @@ MU_TEST(test_is_full)
 MU_TEST(test_size_doubles_on_push)
 {
     mu_check(s1->curr_max_size == 1);
-    push_stackadt(s1, "");
+    cadtstack_push(s1, "");
     mu_check(s1->curr_max_size == 1);
-    push_stackadt(s1, "");
+    cadtstack_push(s1, "");
     mu_check(s1->curr_max_size == 2);
-    push_stackadt(s1, "");
-    push_stackadt(s1, "");
-    push_stackadt(s1, "");
+    cadtstack_push(s1, "");
+    cadtstack_push(s1, "");
+    cadtstack_push(s1, "");
     mu_check(s1->curr_max_size == 8);
 }
 
@@ -96,33 +98,33 @@ MU_TEST(test_size_halves_on_pop)
     /* Load 50 */
     for (i = 0; i < 50; i++)
     {
-        push_stackadt(s1, "Data");
+        cadtstack_push(s1, "Data");
     }
     mu_check(s1->curr_max_size == 64);
 
     /* Let only 14 in, usage = 14% */
     for (i = 0; i < 36 ; i++)
     {
-        pop_stackadt(s1);
+        cadtstack_pop(s1);
     }
     mu_check(s1->curr_max_size == 32);
 }
 
 /*
- * Test whether a stack halves in size when `make_empty_stackadt` is called
+ * Test whether a stack halves in size when `cadtstack_clear` is called
  */
-MU_TEST(test_size_halves_on_make_empty)
+MU_TEST(test_size_halves_on_clear)
 {
     int i;
     mu_check(s1->curr_max_size == 1);
     /* Load 50 */
     for (i = 0; i < 65535; i++)
     {
-        push_stackadt(s1, "Data");
+        cadtstack_push(s1, "Data");
     }
     mu_check(s1->curr_max_size == 65536);
 
-    s1 = make_empty_stackadt(&s1);
+    s1 = cadtstack_clear(&s1);
     mu_check(s1->curr_max_size == s1->min_size);
 }
 
@@ -133,7 +135,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_is_full);
 	MU_RUN_TEST(test_size_doubles_on_push);
 	MU_RUN_TEST(test_size_halves_on_pop);
-	MU_RUN_TEST(test_size_halves_on_make_empty);
+	MU_RUN_TEST(test_size_halves_on_clear);
 }
 
 int main(int argc, char *argv[]) 

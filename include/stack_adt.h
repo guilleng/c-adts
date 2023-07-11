@@ -28,7 +28,7 @@ typedef struct stack_type StackADT;
  * @param size The number of elements for initialization.
  * @return Returns a `StackADT` handle on success, `NULL` on failure. 
  */
-StackADT *create_stackadt(size_t size);
+StackADT *cadtstack_new(size_t size);
 
 /**
  * @brief Creates a fixed-size stack.
@@ -40,7 +40,7 @@ StackADT *create_stackadt(size_t size);
  * @param size The maximum number of items the stack allows.
  * @return Returns a `StackADT` handle on success, `NULL` on failure.
  */
-StackADT *create_fixsize_stackadt(size_t size);
+StackADT *cadtstack_new_fix(size_t size);
 
 /**
  * @brief Deallocates a `StackADT`.
@@ -51,7 +51,7 @@ StackADT *create_fixsize_stackadt(size_t size);
  * @param s The stack to deallocate.  
  * @return Returns no value. 
  */
-void destroy_stackadt(StackADT *s);
+void cadtstack_destroy(StackADT *s);
 
 /**
  * @brief Returns the number of elements `s` currently holds.
@@ -59,15 +59,7 @@ void destroy_stackadt(StackADT *s);
  * @param s The stack to check.  
  * @return Returns the number of elements currently held by `s`.  
  */
-size_t nelems_of_stackadt(StackADT *s);
-
-/**
- * @brief Tests whether the size of `s` is variable or fixed.
- *
- * @param s The stack to check.  
- * @return Returns zero if `s` is of variable size, non-zero otherwise.  
- */
-int is_fix_stackadt(StackADT *s);
+size_t cadtstack_nelems(StackADT *s);
 
 /**
  * @brief Empties the stack pointed to by `stackptr`.
@@ -78,7 +70,7 @@ int is_fix_stackadt(StackADT *s);
  * @param stackptr A pointer to the stack pointer to be emptied. 
  * @return Returns a `StackADT` handle on success, `NULL` on failure.
  */
-StackADT *make_empty_stackadt(StackADT **stackptr);
+StackADT *cadtstack_clear(StackADT **stackptr);
 
 /**
  * @brief Pushes an `Element` into a stack.
@@ -94,7 +86,7 @@ StackADT *make_empty_stackadt(StackADT **stackptr);
  * @param e The element to push into `s`.
  * @return Returns `e` on success, `NULL` on failure. 
  */
-Element push_stackadt(StackADT *s, Element e);
+Element cadtstack_push(StackADT *s, Element e);
 
 /**
  * @brief Pops an item from a stack.
@@ -113,7 +105,7 @@ Element push_stackadt(StackADT *s, Element e);
  * @param s The stack to pop from.
  * @return Returns `NULL` on underflow, an `Element` otherwise. 
  */
-Element pop_stackadt(StackADT *s);
+Element cadtstack_pop(StackADT *s);
 
 #endif
 
