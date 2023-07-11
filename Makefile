@@ -69,7 +69,7 @@ test_%: CFLAGS += $(TESTLDFLAGS)
 test_%: CFLAGS += $(TESTFLAGS) 
 test_%: $(TEST_BIN)/test_%
 	$(info $@)
-	./$(TEST_BIN)/$@ 2> /dev/null;
+	./$(TEST_BIN)/$@ 
 
 # Add a dummy file as a dependency for the docs target
 .DUMMY: $(DOC_DIR)/dummy
