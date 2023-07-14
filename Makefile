@@ -33,21 +33,21 @@ $(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) | $(BUILD_DIR)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
-	
+
 $(TEST_BIN)/test_%_priv: $(TEST_DIR)/test_%_priv.c $(SRC_DIR)/%.c | $(TEST_BIN)
 	@$(CC) $(CFLAGS) -I$(INC_DIR) $< -o $@ 
-
-$(TEST_BIN)/test_%_publ: $(TEST_DIR)/test_%_publ.c $(SRC_DIR)/%.c | $(TEST_BIN)
+	 
+$(TEST_BIN)/test_%_publ: $(TEST_DIR)/test_%_publ.c $(SRC_DIR)/%.c $(INC_DIR)/%.h | $(TEST_BIN)
 	@$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ 
-
+	
 $(BUILD_DIR):
-	@mkdir $(BUILD_DIR)
+	@mkdir $@
 
 $(OBJ_DIR):
-	@mkdir $(OBJ_DIR)
+	@mkdir $@
 
 $(TEST_BIN):
-	@mkdir $(TEST_BIN)
+	@mkdir $@
 
 # Tests all units, output shown only in case of failure. (No news is good news.)
 tests: CFLAGS += $(TESTLDFLAGS)
