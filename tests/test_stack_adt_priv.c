@@ -29,12 +29,12 @@ MU_TEST(test_stack_type)
     errno = 0;
     mu_assert(cadtstack_new(0) == NULL, 
             "Zero size stacks should not be allowed");
-    mu_check(errno = EPERM);
+    mu_check(errno == EINVAL);
 
     errno = 0;
     mu_assert(cadtstack_new(0) == NULL, 
             "Zero size stacks should not be allowed");
-    mu_check(errno = EPERM);
+    mu_check(errno == EINVAL);
 
     mu_check(s0->min_size == 1);
     mu_check(s1->min_size == 1);

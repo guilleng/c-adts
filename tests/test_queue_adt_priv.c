@@ -66,12 +66,12 @@ MU_TEST(test_queue_type)
     errno = 0;
     mu_assert(cadtqueue_new(0) == NULL, 
             "Zero size queues should not be allowed");
-    mu_check(errno = EPERM);
+    mu_check(errno == EINVAL);
 
     errno = 0;
     mu_assert(cadtqueue_new_circular(0) == NULL, 
             "Zero size queues should not be allowed");
-    mu_check(errno = EPERM);
+    mu_check(errno == EINVAL);
 
     mu_check(size_3_dyn->head == 0);
     mu_check(size_3_dyn->tail == 0);
@@ -96,7 +96,7 @@ MU_TEST(test_enqueue)
     errno = 0;
     mu_assert(cadtqueue_enqueue(size_1_fix, "two") == NULL, 
             "Queue should overflow");
-    mu_check(errno = EPERM);
+    mu_check(errno == EPERM);
 
     /* Size 3 queue */
     mu_assert_string_eq("one", cadtqueue_enqueue(size_3_fix, "one"));
@@ -116,7 +116,7 @@ MU_TEST(test_enqueue)
     errno = 0;
     mu_assert(cadtqueue_enqueue(size_3_fix, "X") == NULL, 
             "Queue should overflow");
-    mu_check(errno = EPERM);
+    mu_check(errno == EPERM);
 }
 
 /*
@@ -155,7 +155,7 @@ MU_TEST(test_dequeue)
     errno = 0;
     mu_assert(cadtqueue_dequeue(size_1_fix) == NULL, 
             "Queue should overflow");
-    mu_check(errno = EPERM);
+    mu_check(errno == EPERM);
 
 }
 

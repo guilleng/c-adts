@@ -50,22 +50,21 @@ StackADT *cadtstack_new(size_t size)
 
     if (size == 0)
     {
-        errno = EPERM;
-        perror("cadtstack_new called with 0 size parameter: ");
+        errno = EINVAL;
         return NULL;
     }
 
     new = malloc(sizeof (struct stack_type));
     if (new == NULL)
     {
-        perror("cadtstack_new malloc failed allocating struct stack_type: ");
+        perror("cadtstack_new malloc failed allocating struct stack_type");
         return NULL;
     }
     new->contents = malloc(size * sizeof(Element));
 
     if (new->contents == NULL)
     {
-        perror("cadtstack_new malloc failed allocating Element: ");
+        perror("cadtstack_new malloc failed allocating Element");
         return NULL;
     }
 
@@ -122,7 +121,7 @@ StackADT *cadtstack_clear(StackADT *s)
 
         if (new == NULL)
         {
-            perror("cadtstack_clear malloc failed allocating Element: ");
+            perror("cadtstack_clear malloc failed allocating Element");
             return NULL;
         }
 
@@ -158,7 +157,7 @@ Element cadtstack_push(StackADT *s, Element e)
             realloc(s->contents, (s->curr_max_size *= 2) * sizeof(Element));
         if (p == NULL)
         {
-            perror("push_ezstack (Realloc): ");
+            perror("push_ezstack (Realloc)");
             return NULL;
         }
         s->contents = p;
@@ -189,7 +188,7 @@ Element cadtstack_pop(StackADT *s)
             realloc(s->contents, (s->curr_max_size /= 2) * sizeof(Element));
         if (p == NULL)
         {
-            perror("push_ezstack (Realloc): ");
+            perror("push_ezstack (Realloc)");
             return s->contents[--s->top];
         }
         s->contents = p;

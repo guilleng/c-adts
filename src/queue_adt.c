@@ -125,22 +125,21 @@ QueueADT *cadtqueue_new(size_t size)
 
     if (size == 0)
     {
-        errno = EPERM;
-        perror("cadtqueue_new called with 0 size parameter: ");
+        errno = EINVAL;
         return NULL;
     }
 
     new = malloc(sizeof(struct queue_type));
     if (new == NULL)
     { 
-        perror("cadtqueue_new malloc failed allocating struct queue_type: ");
+        perror("cadtqueue_new malloc failed allocating struct queue_type");
         return NULL;
     }
     
     new->contents = malloc(size * sizeof(Element));
     if (new->contents == NULL)
     {
-        perror("cadtqueue_new malloc failed allocating Element array: ");
+        perror("cadtqueue_new malloc failed allocating Element array");
         return NULL;
     }
 
@@ -198,7 +197,7 @@ QueueADT *cadtqueue_clear(QueueADT *q)
         Element *new = malloc(q->min_size * sizeof(Element));
         if (new== NULL)
         {
-            perror("cadtqueue_clear malloc failed allocating Element array: ");
+            perror("cadtqueue_clear malloc failed allocating Element array");
             return NULL;
         }
 

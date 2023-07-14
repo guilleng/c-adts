@@ -30,7 +30,7 @@ MU_TEST(test_ezstack_fixsize)
     /* Stack overflow */
     errno = 0;
     mu_check(cadtstack_push(s1, elements[2]) == NULL);
-    mu_check(errno = EPERM);
+    mu_check(errno == EPERM);
     mu_check(cadtstack_nelems(s1) == 2);
 
     mu_assert_string_eq("ipsum", cadtstack_pop(s1));
@@ -40,7 +40,7 @@ MU_TEST(test_ezstack_fixsize)
     /* Stack underflow */
     errno = 0;
     mu_check(cadtstack_pop(s1) == NULL);
-    mu_check(errno = EPERM);
+    mu_check(errno == EPERM);
 }
 
 MU_TEST(test_ezstack_notfixsize)
@@ -75,7 +75,7 @@ MU_TEST(test_ezstack_notfixsize)
     /* Stack underflow */
     errno = 0;
     mu_check(cadtstack_pop(s2) == NULL);
-    mu_check(errno = EPERM);
+    mu_check(errno == EPERM);
 }
 
 MU_TEST_SUITE(test_suite) 

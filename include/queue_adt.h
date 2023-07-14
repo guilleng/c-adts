@@ -22,7 +22,7 @@ typedef struct queue_type QueueADT;
  *  + __Halves__ if usage falls _below 25%_ and the shrinking leaves it at a 
  *    size at least _equal to_ its original definition.
  *
- * If the size argument passed is zero, `errno` is set to `EPERM`. In case of 
+ * If the size argument passed is zero, `errno` is set to `EINVAL`. In case of 
  * failure to allocate memory `errno` is set to `ENOMEM`. For both cases the 
  * interpreted error message is outputted to `stderr`, and `NULL` is returned.
  *
