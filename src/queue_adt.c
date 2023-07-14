@@ -1,4 +1,5 @@
 #include "queue_adt.h"
+
 #define HALF 0.5
 #define TWICE 2.0
 
@@ -13,8 +14,7 @@
  *  + The number of elements currently in the queue.
  *  + The array's minimum size.
  *  + The array's current maximum size.
- *  + A flag that determines whether the stack is of fixed size or may possibly
-
+ *  + A flag that determines whether the queue is dynamic or not.
  */
 struct queue_type
 {
@@ -38,7 +38,7 @@ static inline int is_full(QueueADT *q)
 }
 
 /*
- * Returns non-zero if `q` is * circular (fixed-size)
+ * Returns non-zero if `q` is a fixed-size queue
  */
 static inline int is_fix(QueueADT *q)
 {
@@ -47,9 +47,9 @@ static inline int is_fix(QueueADT *q)
 
 
 /* 
- * Copies into `new` `q->contents[]` shifting to lower indexes if necessary.
+ * Copies into `new[]` `q->contents[]` shifting to lower indexes if necessary.
  */ 
-static inline void shift_elements(QueueADT *q, Element *new)
+static inline void shift_elements(QueueADT *q, Element new[])
 {
     if (q->head > q->tail)
     {
