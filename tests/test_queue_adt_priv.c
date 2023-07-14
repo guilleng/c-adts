@@ -2,6 +2,7 @@
 #include "../src/queue_adt.c"
 
 static QueueADT *size_3_dyn, *size_3_fix, *size_1_dyn, *size_1_fix;
+static QueueADT *size_48, *size_3;
 
 void test_setup(void)
 {
@@ -9,6 +10,40 @@ void test_setup(void)
     size_3_fix = cadtqueue_new_circular(3);
     size_1_dyn = cadtqueue_new(1);
     size_1_fix = cadtqueue_new_circular(1);
+    size_3 = cadtqueue_new(3);
+    /* 
+     * Make Queue: | d | b | c |
+     *               tl  hd
+     */
+    size_3->contents[0] = "d";
+    size_3->contents[1] = "b";
+    size_3->contents[2] = "c";
+    size_3->head = 1;
+    size_3->tail = 0;
+    size_3->nelems = 3;
+
+    size_48 = cadtqueue_new(48);
+    /*
+     *                 <--          -->
+     * Make Queue: | r | s | ... | h | i | j | k | l | m | n | o | p | q |
+     *             |   | tl| ... | hd
+     */
+    size_48->head = 38;
+    size_48->tail = 1;
+    size_48->nelems = 12;
+    size_48->contents[0] = "r";
+    size_48->contents[1] = "s";
+    size_48->contents[38] = "h";
+    size_48->contents[39] = "i";
+    size_48->contents[40] = "j";
+    size_48->contents[41] = "k";
+    size_48->contents[42] = "l";
+    size_48->contents[43] = "m";
+    size_48->contents[44] = "n";
+    size_48->contents[45] = "o";
+    size_48->contents[46] = "p";
+    size_48->contents[47] = "q";
+
     return;
 }
 
@@ -18,6 +53,8 @@ void test_teardown(void)
     cadtqueue_destroy(size_3_fix);
     cadtqueue_destroy(size_1_dyn);
     cadtqueue_destroy(size_1_fix);
+    cadtqueue_destroy(size_3);
+    cadtqueue_destroy(size_48);
     return;
 }
 
@@ -123,7 +160,7 @@ MU_TEST(test_dequeue)
 }
 
 /*
- * Tests wrap-around behavior
+ * Tests wrap-around behavior. Depends on the enqueue and dequeue functions. 
  */
 MU_TEST(test_wraparaoud)
 {
@@ -159,154 +196,138 @@ MU_TEST(test_wraparaoud)
 }
 
 /*
- * Test double contents array
+ * Test helper function shift elements
+ */
+MU_TEST(test_shift_elements)
+{
+    Element *new;
+    /* 
+     * Use Queue: | d | b | c |
+     *              tl  hd
+     */
+
+    new = malloc(3 * sizeof(Element));
+    if (new == NULL)
+    {
+        perror("malloc failed allocating Element array: ");
+        exit(EXIT_FAILURE);
+    }
+
+    shift_elements(size_3, new);
+    /* 
+     * Array should be now: | b | c | d |
+     */
+    mu_assert_string_eq(new[0], "b");
+    mu_assert_string_eq(new[1], "c");
+    mu_assert_string_eq(new[2], "d");
+    free(new);
+
+    new = malloc(48 * sizeof(Element));
+    if (new == NULL)
+    {
+        perror("malloc failed allocating Element array: ");
+        exit(EXIT_FAILURE);
+    }
+    /*
+     *                <--          -->
+     * Use Queue: | r | s | ... | h | i | j | k | l | m | n | o | p | q |
+     *            |   | tl| ... | hd
+     */
+    shift_elements(size_48, new);
+
+    /* 
+     * Array should be now: | h | i | j | k | l | m | n | ...|
+     */
+    mu_assert_string_eq(new[0], "h");
+    mu_assert_string_eq(new[3], "k");
+    mu_assert_string_eq(new[9], "q");
+    mu_assert_string_eq(new[11], "s");
+    free(new);
+}
+
+/*
+ * Test whether `resize_contents_array` correctly doubles contents array. 
+ * Depends on a correct implementation of the `shift_elements` function.
  */
 MU_TEST(test_double_contents_size)
 {
     /* 
-     * Make Queue: | d | b | c |
-     *               tl  hd
+     * Use Queue: | d | b | c |
+     *              tl  hd
      */
-    size_3_dyn->contents[0] = "d";
-    size_3_dyn->contents[1] = "b";
-    size_3_dyn->contents[2] = "c";
-    size_3_dyn->head = 1;
-    size_3_dyn->tail = 0;
-    size_3_dyn->nelems = 3;
 
     /* Assert conditions for doubling */
-    mu_check(is_full(size_3_dyn));
-    mu_check(!is_fix(size_3_dyn));
+    mu_check(is_full(size_3));
+    mu_check(!is_fix(size_3));
 
     /* Double the size */
-    mu_check(resize_contents_array(size_3_dyn, 2.0) != NULL);
+    mu_check(resize_contents_array(size_3, 2.0) != NULL);
 
     /* Check new internals:
      * 
      * Queue should be now: | b | c | d |  |  |  | 
      *                        hd      tl
      */
-    mu_check(size_3_dyn->head == 0);
-    mu_check(size_3_dyn->tail == 2);
-    mu_check(size_3_dyn->nelems == 3);
-    mu_check(size_3_dyn->min_size == 3);
-    mu_check(size_3_dyn->curr_max_size == 6);
-    mu_assert_string_eq("b", size_3_dyn->contents[0]);
-    mu_assert_string_eq("c", size_3_dyn->contents[1]);
-    mu_assert_string_eq("d", size_3_dyn->contents[2]);
+    mu_check(size_3->head == 0);
+    mu_check(size_3->tail == 2);
+    mu_check(size_3->nelems == 3);
+    mu_check(size_3->min_size == 3);
+    mu_check(size_3->curr_max_size == 6);
+    mu_assert_string_eq("b", size_3->contents[0]);
+    mu_assert_string_eq("c", size_3->contents[1]);
+    mu_assert_string_eq("d", size_3->contents[2]);
     
-    /*
-     *                 <--   -->
-     * Make Queue: | h | i | d | e | f | g |
-     *             |   | tl| hd|   |   |   |
-     */
-    size_3_dyn->contents[0] = "h";
-    size_3_dyn->contents[1] = "i";
-    size_3_dyn->contents[2] = "d";
-    size_3_dyn->contents[3] = "e";
-    size_3_dyn->contents[4] = "f";
-    size_3_dyn->contents[5] = "g";
-    size_3_dyn->head = 2;
-    size_3_dyn->tail = 1;
-    size_3_dyn->nelems = 6;
-
-    /* Double the size by inserting an element */
-    cadtqueue_enqueue(size_3_dyn, "j");
-
-    /* Check new internals: 
-     *
-     * Queue should be now: | d | e | f | g | h | i | j | ...|
-     *                      | hd|   |   |   |   |   | tl| ...|
-     */
-    mu_check(size_3_dyn->head == 0);
-    mu_check(size_3_dyn->tail == 6);
-    mu_check(size_3_dyn->nelems == 7);
-    mu_check(size_3_dyn->min_size == 3);
-    mu_check(size_3_dyn->curr_max_size == 12);
-    mu_assert_string_eq("d", size_3_dyn->contents[0]);
-    mu_assert_string_eq("e", size_3_dyn->contents[1]);
-    mu_assert_string_eq("g", size_3_dyn->contents[3]);
-    mu_assert_string_eq("j", size_3_dyn->contents[6]);
-
-    /* Some more tests with a size 1 queue */
-    cadtqueue_enqueue(size_1_dyn, "a");
-    cadtqueue_enqueue(size_1_dyn, "b");
-    cadtqueue_enqueue(size_1_dyn, "c");
-    cadtqueue_enqueue(size_1_dyn, "d");
-    cadtqueue_enqueue(size_1_dyn, "e");
-    mu_assert_string_eq("a", size_1_dyn->contents[0]);
-    mu_assert_string_eq("c", size_1_dyn->contents[2]);
-    mu_assert_string_eq("e", size_1_dyn->contents[4]);
-    mu_check(size_1_dyn->curr_max_size == 8);
 }
 
 /*
- * Test halving contents array
+ * Test whether `resize_contents_array` correctly halves contents array. 
+ * Depends on a correct implementation of the `shift_elements` function.
  */
 MU_TEST(test_halve_content_size)
 {
-    /* Double size a couple of times */
-    mu_check(resize_contents_array(size_3_dyn, 2.0) != NULL);
-    mu_check(resize_contents_array(size_3_dyn, 2.0) != NULL);
-    mu_check(resize_contents_array(size_3_dyn, 2.0) != NULL);
-    mu_check(resize_contents_array(size_3_dyn, 2.0) != NULL);
-    mu_check(size_3_dyn->curr_max_size == 48);
-
     /*
-     *                 <--          -->
-     * Make Queue: | r | s | ... | h | i | j | k | l | m | n | o | p | q |
-     *             |   | tl| ... | hd
+     *                <--          -->
+     * Use Queue: | r | s | ... | h | i | j | k | l | m | n | o | p | q |
+     *            |   | tl| ... | hd
+     *
+     * Mock the queue's current minimum size 
      */
-    size_3_dyn->contents[0] = "r";
-    size_3_dyn->contents[1] = "s";
-    size_3_dyn->contents[38] = "h";
-    size_3_dyn->contents[39] = "i";
-    size_3_dyn->contents[40] = "j";
-    size_3_dyn->contents[41] = "k";
-    size_3_dyn->contents[42] = "l";
-    size_3_dyn->contents[43] = "m";
-    size_3_dyn->contents[44] = "n";
-    size_3_dyn->contents[45] = "o";
-    size_3_dyn->contents[46] = "p";
-    size_3_dyn->contents[47] = "q";
-    size_3_dyn->head = 38;
-    size_3_dyn->tail = 1;
-    size_3_dyn->nelems = 12;
+    size_48->min_size = 3;
 
-    mu_check(resize_contents_array(size_3_dyn, 0.5) != NULL);
+    mu_check(resize_contents_array(size_48, 0.5) != NULL);
     /* 
      * Queue should be now: | h | i | j | k | l | m | n | ...|
      *                      | hd|   |   |   |   |   |   | ...|
      */
-    mu_check(size_3_dyn->head == 0);
-    mu_check(size_3_dyn->tail == 11);
-    mu_check(size_3_dyn->nelems == 12);
-    mu_check(size_3_dyn->min_size == 3);
-    mu_check(size_3_dyn->curr_max_size == 24);
-    mu_assert_string_eq("h", size_3_dyn->contents[0]);
-    mu_assert_string_eq("k", size_3_dyn->contents[3]);
-    mu_assert_string_eq("q", size_3_dyn->contents[9]);
-    mu_assert_string_eq("s", size_3_dyn->contents[11]);
+    mu_check(size_48->head == 0);
+    mu_check(size_48->tail == 11);
+    mu_check(size_48->nelems == 12);
+    mu_check(size_48->min_size == 3);
+    mu_check(size_48->curr_max_size == 24);
+    mu_assert_string_eq("h", size_48->contents[0]);
+    mu_assert_string_eq("k", size_48->contents[3]);
+    mu_assert_string_eq("q", size_48->contents[9]);
+    mu_assert_string_eq("s", size_48->contents[11]);
 
     /* Testing if dequeueing automatically triggers resizing */
-    cadtqueue_dequeue(size_3_dyn); /* pop h */
-    cadtqueue_dequeue(size_3_dyn); /* pop i */
-    cadtqueue_dequeue(size_3_dyn); /* pop j */
-    cadtqueue_dequeue(size_3_dyn); /* pop k */
-    cadtqueue_dequeue(size_3_dyn); /* pop l */
-    cadtqueue_dequeue(size_3_dyn); /* pop m */
-    cadtqueue_dequeue(size_3_dyn); /* pop n */
-    cadtqueue_dequeue(size_3_dyn); /* pop o */
+    cadtqueue_dequeue(size_48); /* pop h */
+    cadtqueue_dequeue(size_48); /* pop i */
+    cadtqueue_dequeue(size_48); /* pop j */
+    cadtqueue_dequeue(size_48); /* pop k */
+    cadtqueue_dequeue(size_48); /* pop l */
+    cadtqueue_dequeue(size_48); /* pop m */
+    cadtqueue_dequeue(size_48); /* pop n */
+    cadtqueue_dequeue(size_48); /* pop o */
     /* 
      * Queue should be now: |   | p | q | r | s |   |   | ...|
      *                      |   | hd|   |   | tl|   |   | ...|
      */
-    mu_check(size_3_dyn->head == 1);
-    mu_check(size_3_dyn->tail == 4);
-    mu_check(size_3_dyn->nelems == 4);
-    mu_check(size_3_dyn->min_size == 3);
-    mu_check(size_3_dyn->curr_max_size == 12);
-    mu_assert_string_eq("p", size_3_dyn->contents[1]);
+    mu_check(size_48->head == 1);
+    mu_check(size_48->tail == 4);
+    mu_check(size_48->nelems == 4);
+    mu_check(size_48->min_size == 3);
+    mu_check(size_48->curr_max_size == 12);
+    mu_assert_string_eq("p", size_48->contents[1]);
 
     /* Notice that hd is at index 1. This is the expected behavior, the pop 
      * operation is done after the resizing takes place */
@@ -319,6 +340,7 @@ MU_TEST_SUITE(test_suite)
     MU_RUN_TEST(test_enqueue);
     MU_RUN_TEST(test_dequeue);
     MU_RUN_TEST(test_wraparaoud);
+    MU_RUN_TEST(test_shift_elements);
     MU_RUN_TEST(test_double_contents_size);
     MU_RUN_TEST(test_halve_content_size);
 }
