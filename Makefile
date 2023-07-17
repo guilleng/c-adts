@@ -1,14 +1,13 @@
 CC := gcc
-
 CFLAGS := -std=c99 -g -Wall -Wextra -Wpedantic
 
 TESTFLAGS := \
 	-ggdb3 -Wconversion -Wshadow \
 	-Wno-unused-function -Wno-unused-parameter -Wno-unused-variable \
 	-fsanitize=address,undefined,leak
-TESTLDFLAGS := -lasan -lm -lrt 
+TESTLDFLAGS := -lasan -lrt -lm
 
-TARGET_EXEC := main 
+TARGET_EXEC := main
 
 BUILD_DIR := ./bin
 DOC_DIR := ./docs/html
@@ -22,32 +21,38 @@ SRCS := $(wildcard $(SRC_DIR)/*.c)
 OBJS := $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRCS))
 
 TEST_SRCS := $(wildcard $(TEST_DIR)/test_*.c)
+# Excludes $(TARGET_EXEC).o, all our test binaries contain a `main()` function.
+TEST_OBJS := $(filter-out $(TEST_BIN)/$(notdir $(TARGET_EXEC)).o, $(patsubst $(SRC_DIR)/%.c, $(TEST_BIN)/%.o, $(SRCS)))
 TEST_EXEC := $(patsubst $(TEST_DIR)/%.c, $(TEST_BIN)/%, $(TEST_SRCS))
+
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) | $(BUILD_DIR)
+	@$(CC) $(CFLAGS) $^ -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(INC_DIR)/%.h | $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
+
+$(OBJ_DIR)/$(TARGET_EXEC).o: $(SRC_DIR)/$(TARGET_EXEC).c | $(OBJ_DIR)
+	@$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
+
+# This recipe filters out the object file corresponding to the current target,   
+# otherwise we will attempt at linking it twice.
+$(TEST_BIN)/test_%_priv: $(TEST_DIR)/test_%_priv.c $(SRC_DIR)/%.c $(TEST_OBJS) | $(TEST_BIN)
+	@$(CC) $(CFLAGS) -I$(INC_DIR) $< $(filter-out $(TEST_BIN)/$*.o, $(TEST_OBJS)) -o $@ 
+
+$(TEST_BIN)/test_%_publ: $(TEST_DIR)/test_%_publ.c $(SRC_DIR)/%.c $(INC_DIR)/%.h $(TEST_OBJS) | $(TEST_BIN)
+	@$(CC) $(CFLAGS) -I$(INC_DIR) $< $(TEST_OBJS) -o $@ 
+
+$(TEST_BIN)/%.o: $(SRC_DIR)/%.c | $(TEST_BIN)                                   
+	@$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@                                   
+
+$(BUILD_DIR) $(DOC_DIR) $(OBJ_DIR) $(TEST_BIN):
+	@mkdir -p $@
 
 .PHONY: all tests clean
 
+.PRECIOUS: $(TEST_OBJS)  
+
 all: $(BUILD_DIR)/$(TARGET_EXEC)
-
-$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) $^ -o $@
-
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
-
-$(TEST_BIN)/test_%_priv: $(TEST_DIR)/test_%_priv.c $(SRC_DIR)/%.c | $(TEST_BIN)
-	@$(CC) $(CFLAGS) -I$(INC_DIR) $< -o $@ 
-	 
-$(TEST_BIN)/test_%_publ: $(TEST_DIR)/test_%_publ.c $(SRC_DIR)/%.c $(INC_DIR)/%.h | $(TEST_BIN)
-	@$(CC) $(CFLAGS) -I$(INC_DIR) $^ -o $@ 
-	
-$(BUILD_DIR):
-	@mkdir $@
-
-$(OBJ_DIR):
-	@mkdir $@
-
-$(TEST_BIN):
-	@mkdir $@
 
 # Tests all units, output shown only in case of failure. (No news is good news.)
 tests: CFLAGS += $(TESTLDFLAGS)
@@ -68,15 +73,8 @@ test_%: CFLAGS += $(TESTFLAGS)
 test_%: $(TEST_BIN)/test_%
 	./$(TEST_BIN)/$@ 
 
-# Add a dummy file as a dependency for the docs target
-.DUMMY: $(DOC_DIR)/dummy
-
-# Update the docs target with the dummy file dependency
-docs: $(DOC_DIR)/dummy
-
-$(DOC_DIR)/dummy: 
+docs: $(DOC_DIR)
 	@doxygen Doxyfile
-	@touch $@
 
 clean:
 	@rm -rf $(BUILD_DIR) $(DOC_DIR) $(OBJ_DIR) $(TEST_BIN)
