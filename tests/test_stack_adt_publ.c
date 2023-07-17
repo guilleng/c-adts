@@ -19,7 +19,7 @@ void test_teardown(void)
     return;
 }
 
-MU_TEST(test_ezstack_fixsize)
+MU_TEST(test_fixsize_stack)
 {
     mu_check(cadtstack_nelems(s1) == 0);
 
@@ -43,7 +43,7 @@ MU_TEST(test_ezstack_fixsize)
     mu_check(errno == EPERM);
 }
 
-MU_TEST(test_ezstack_notfixsize)
+MU_TEST(test_dynamic_stack)
 {
     mu_check(cadtstack_nelems(s2) == 0);
 
@@ -81,8 +81,8 @@ MU_TEST(test_ezstack_notfixsize)
 MU_TEST_SUITE(test_suite) 
 {
         MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
-        MU_RUN_TEST(test_ezstack_fixsize);
-        MU_RUN_TEST(test_ezstack_notfixsize);
+        MU_RUN_TEST(test_fixsize_stack);
+        MU_RUN_TEST(test_dynamic_stack);
 }
 
 int main(int argc, char *argv[]) 
