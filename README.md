@@ -5,6 +5,7 @@ A basic C data structure library.
 ## Implemented Data Structures
 
 + Stack
++ Queue
 
 ---
 
