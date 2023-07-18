@@ -17,14 +17,15 @@ typedef struct queue_type QueueADT;
 /**
  * @brief Creates a _non-circular_ (dynamic) queue.
  *
- * Allocates a queue with a minimum size of `size` that behaves as follows:
+ * Allocates a queue with a minimum size of `size` that:
  *  + __Doubles__ in size whenever _full_.
  *  + __Halves__ if usage falls _below 25%_ and the shrinking leaves it at a 
  *    size at least _equal to_ its original definition.
  *
- * If the size argument passed is zero, `errno` is set to `EINVAL`. In case of 
- * failure to allocate memory `errno` is set to `ENOMEM`. For both cases the 
- * interpreted error message is outputted to `stderr`, and `NULL` is returned.
+ * In case of failure to allocate memory `errno` is set to `ENOMEM` and the 
+ * interpreted error message is outputted to `stderr`. If the size argument 
+ * passed is zero, `errno` is set to `EINVAL`. For both cases, `NULL` is 
+ * returned.
  *
  * @param size The number of elements for initialization.
  * @return Returns a `QueueADT` handle on success, `NULL` on failure.
@@ -34,9 +35,10 @@ QueueADT *cadtqueue_new(size_t size);
 /**
  * @brief Creates a _circular_ (fixed-size) queue.
  *
- * If the size argument passed is zero, `errno` is set to `EPERM`. In case of 
- * failure to allocate memory `errno` is set to `ENOMEM`. For both cases the 
- * interpreted error message is outputted to `stderr`, and `NULL` is returned.
+ * In case of failure to allocate memory `errno` is set to `ENOMEM` and the 
+ * interpreted error message is outputted to `stderr`. If the size argument 
+ * passed is zero, `errno` is set to `EINVAL`. For both cases, `NULL` is 
+ * returned.
  *
  * @param size The maximum number of items the queue allows.
  * @return Returns a `QueueADT` handle on success, `NULL` on failure.
@@ -63,12 +65,12 @@ void cadtqueue_destroy(QueueADT *q);
 size_t cadtqueue_nelems(QueueADT *q);
 
 /**
- * @brief Empties the queue pointed to by `queueptr`.
+ * @brief Empties the queue `q`.
  *
  * @note Client-side is responsible for deallocating the memory in-use by the 
- *       elements of the queue `q`.  
+ *       elements of the queue.  
  *
- * @param queueptr A pointer to the queue pointer to be emptied.  
+ * @param q The queue to be emptied.  
  * @return Returns an `QueueADT` handle on success, `NULL` on failure.
  */
 QueueADT *cadtqueue_clear(QueueADT *queueptr);
@@ -136,7 +138,7 @@ Element cadtqueue_dequeue(QueueADT *q);
  * @file queue_adt.h
  *
  * An opaque data structure which represents a queue. It should only be
- * accessed through the `*_queueadt` functions.  
+ * accessed through the `cadtqueue_` functions.  
  *
  * @code{.c}
  * struct queue_type QueueADT
@@ -145,13 +147,15 @@ Element cadtqueue_dequeue(QueueADT *q);
  * }
  * @endcode
  *
- * @note See the html rendered version of the C code for the implementation of 
- * this module here: <a href="queue_adt_8c-example.html">queue_adt.c</a>.
+ * @note To view the HTML rendered version of the C code for the implementation 
+ * of this module, please visit: 
+ * <a href="queue_adt_8c-example.html">queue_adt.c</a>.
  *
  * ---
  *
  * ### Key Points
- *  + Relies on `void` pointers to allow manipulating elements of any type. 
+ *  + Relies on `void` pointers to allow manipulating elements of any type. See 
+ *    @ref data_types.h.
  *  + Uses `errno` for managing underflows/overflows.
  *  + Dynamically allocated. 
  *  + Clients can allocate __circular__ and __non-circular__ queues:
@@ -164,6 +168,4 @@ Element cadtqueue_dequeue(QueueADT *q);
  *    loaded to the structure.  
  *  + No type safety.
  *
- * To incorporate this data structure into one of your projects, just copy the 
- * header (`.h`), source file (`.c`), and the `/inlcude/common` folder.
  */

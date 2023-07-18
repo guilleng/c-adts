@@ -130,7 +130,7 @@
   <file>
     <briefdescription visible="no"/>
     <detaileddescription title="Description"/>
-    <includes visible="$SHOW_INCLUDE_FILES"/>
+    <includes visible="no"/>
     <includegraph visible="$INCLUDE_GRAPH"/>
     <includedbygraph visible="$INCLUDED_BY_GRAPH"/>
     <sourcelink visible="yes"/>

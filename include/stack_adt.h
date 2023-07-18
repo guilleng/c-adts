@@ -91,11 +91,11 @@ Element cadtstack_push(StackADT *s, Element e);
 /**
  * @brief Pops an item from a stack.
  *
- * Returns and removes the last element added to it. If `s` is empty (__Stack 
- * underflow__), `NULL` is returned and `errno` is set to `EPERM`. 
+ * Returns and removes the last element added to the stach. If `s` is empty 
+ * (__Stack underflow__), `NULL` is returned and `errno` is set to `EPERM`. 
  *
- * + If `s` is a variable-size stack and its usage is below 25% before the pop 
- *   operation, the stack size is halved before popping the item. 
+ * + If `s` is a variable-size stack and its usage is below 25%, the stack size 
+ *   is halved.  
  * + If the reallocation of memory fails, `ENOMEM` is set, but the top element 
  *   is still popped from the stack.
  *
@@ -112,6 +112,9 @@ Element cadtstack_pop(StackADT *s);
 /**
  * @file stack_adt.h
  *
+ * An opaque data structure which represents a stack. It should only be accessed
+ * through the `cadtstack_` functions.
+ *
  * @code{.c}
  * struct stack_type StackADT
  * {
@@ -119,13 +122,13 @@ Element cadtstack_pop(StackADT *s);
  * }
  * @endcode
  *
- * @note See the html rendered version of the C code for the implementation of 
- * this module here: <a href="stack_adt_8c-example.html">stack_adt.c</a>.
- *
- * ---
+ * @note To view the HTML rendered version of the C code for the implementation 
+ * of this module, please visit: 
+ * <a href="stack_adt_8c-example.html">stack_adt.c</a>.
  *
  * ### Key Points
- *  + Relies on `void` pointers to allow manipulating elements of any type. 
+ *  + Relies on `void` pointers to allow manipulating elements of any type. See
+ *    @ref data_types.h.
  *  + Uses `errno` for managing stack underflows/overflows. 
  *  + Dynamically allocated. 
  *  + Stack object size can be __fixed__ or __variable__.  
@@ -135,6 +138,4 @@ Element cadtstack_pop(StackADT *s);
  *    loaded to the structure.  
  *  + No type safety.   
  *
- * To incorporate this data structure into one of your projects, just copy the 
- * header (`.h`), source file (`.c`), and the `/inlcude/common` folder.
  */
