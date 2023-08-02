@@ -6,6 +6,7 @@ A basic C data structure library.
 
 + Stack
 + Queue
++ Hash Table (Fixed size only)
 
 ## Table of Contents
 
@@ -88,6 +89,6 @@ functionality of the code.
 If you wish to delve deeper, comments within the source files and test files 
 serve to describe relevant implementation details when deemed necessary.  
 
-The rationale behind this documenatation layout is to keep it somewhat simple, 
+The rationale behind this documentation layout is to keep it somewhat simple, 
 avoid comment-cluttering and set a clear distinction between the interface's 
 functionality and the internal workings of the implementation.
